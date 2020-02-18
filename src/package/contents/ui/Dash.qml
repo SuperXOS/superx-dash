@@ -23,35 +23,36 @@ import QtQuick 2.14
 import QtQuick.Layouts 1.14
 import QtQuick.Controls 2.14
 
-import org.kde.plasma.plasmoid 2.0
-
-import com.superxos.dash 1.0 as DashPlugin
-
-Item {
-    id: root
-
+Rectangle {
     anchors.fill: parent
+    color: "#55ffffff"
 
-    Plasmoid.switchWidth: Plasmoid.fullRepresentationItem.Layout.minimumWidth
-    Plasmoid.switchHeight: Plasmoid.fullRepresentationItem.Layout.minimumHeight
+    ListModel {
+        id: appsModel
 
-    Plasmoid.preferredRepresentation: Plasmoid.fullRepresentation
-    Plasmoid.fullRepresentation: dash
-
-    Plasmoid.icon: plasmoid.configuration.icon
-
-    Dash {
-        id: dash
+        ListElement { text: "1" }
+        ListElement { text: "2" }
+        ListElement { text: "3" }
+        ListElement { text: "4" }
+        ListElement { text: "5" }
+        ListElement { text: "6" }
+        ListElement { text: "7" }
+        ListElement { text: "8" }
+        ListElement { text: "9" }
+        ListElement { text: "10" }
     }
 
-    Component.onCompleted: {
-        DashPlugin.AppsList.appsList();
-    }
+    GridView {
+        id: appsGrid
 
-    Connections {
-        target: DashPlugin.AppsList
-        onAppsListResult: {
-            console.log(JSON.stringify(apps, null, 2));
+        anchors.fill: parent
+        cellWidth: 50
+        cellHeight: 50
+
+        model: appsModel
+        delegate: AppItem {
+            cellWidth: appsGrid.cellWidth
+            cellHeight: appsGrid.cellHeight
         }
     }
 }

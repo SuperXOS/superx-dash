@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 3.10)
 
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+
 set(SUPERX_DASH_VERSION 0.1.0)
 project(superx-dash VERSION ${SUPERX_DASH_VERSION})
 
@@ -9,7 +12,15 @@ set(REQUIRED_KF5_VERSION 5.60)
 find_package(ECM ${REQUIRED_KF5_VERSION} REQUIRED NO_MODULE)
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${ECM_MODULE_PATH})
 
-find_package(KF5 REQUIRED Plasma)
-find_package(Qt5 REQUIRED Quick)
+include(KDEInstallDirs)
+include(KDEClangFormat)
+
+find_package(KF5 REQUIRED COMPONENTS Plasma KIO)
+find_package(Qt5 REQUIRED COMPONENTS Quick )
 
 add_subdirectory(src)
+
+feature_summary(WHAT ALL INCLUDE_QUIET_PACKAGES FATAL_ON_MISSING_REQUIRED_PACKAGES)
+
+file(GLOB_RECURSE ALL_CLANG_FORMAT_SOURCE_FILES *.cpp *.h)
+kde_clang_format(${ALL_CLANG_FORMAT_SOURCE_FILES})
