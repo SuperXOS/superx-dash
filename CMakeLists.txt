@@ -13,7 +13,6 @@ find_package(ECM ${REQUIRED_KF5_VERSION} REQUIRED NO_MODULE)
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${ECM_MODULE_PATH})
 
 include(KDEInstallDirs)
-include(KDEClangFormat)
 
 find_package(KF5 REQUIRED COMPONENTS Plasma KIO)
 find_package(Qt5 REQUIRED COMPONENTS Quick )
@@ -23,4 +22,3 @@ add_subdirectory(src)
 feature_summary(WHAT ALL INCLUDE_QUIET_PACKAGES FATAL_ON_MISSING_REQUIRED_PACKAGES)
 
 file(GLOB_RECURSE ALL_CLANG_FORMAT_SOURCE_FILES *.cpp *.h)
-kde_clang_format(${ALL_CLANG_FORMAT_SOURCE_FILES})

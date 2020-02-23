@@ -42,7 +42,8 @@ void AppsList::appsList() {
             for (KIO::UDSEntry app : list) {
               QJsonObject obj = {{"name", app.stringValue(app.UDS_NAME)},
                                  {"icon", app.stringValue(app.UDS_ICON_NAME)},
-                                 {"url", app.stringValue(app.UDS_URL)}};
+                                 {"url", app.stringValue(app.UDS_LOCAL_PATH)},
+                                 {"mimeType", app.stringValue(app.UDS_MIME_TYPE)}};
 
               apps.append(obj);
             }

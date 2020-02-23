@@ -43,15 +43,4 @@ Item {
     Dash {
         id: dash
     }
-
-    Component.onCompleted: {
-        DashPlugin.AppsList.appsList();
-    }
-
-    Connections {
-        target: DashPlugin.AppsList
-        onAppsListResult: {
-            console.log(JSON.stringify(apps, null, 2));
-        }
-    }
 }
