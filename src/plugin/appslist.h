@@ -35,6 +35,7 @@ class AppsList : public QObject {
 
  public slots:
   void appsList();
+  void openApp(QString path);
 
  signals:
   void appsListResult(QJsonArray apps);

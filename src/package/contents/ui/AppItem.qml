@@ -4,12 +4,15 @@ import QtQuick.Controls 2.14
 
 import org.kde.kirigami 2.7 as Kirigami
 
+
 /**
   * Provides the delegate to display an application item
   */
 Item {
-    property var cellWidth;
-    property var cellHeight;
+    property var cellWidth
+    property var cellHeight
+
+    signal openApp
 
     id: appItem
     width: cellWidth
@@ -41,6 +44,9 @@ Item {
     }
     MouseArea {
         anchors.fill: parent
-        onClicked: parent.GridView.view.currentIndex = index
+        onClicked: {
+            parent.GridView.view.currentIndex = index
+            openApp()
+        }
     }
 }

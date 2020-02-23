@@ -79,7 +79,10 @@ Rectangle {
 
         delegate: AppItem {
             cellWidth: appsGrid.cellWidth - 30
-            cellHeight: appsGrid.cellHeight - 30
+            cellHeight: appsGrid.cellHeight - 30            
+            onOpenApp: {
+                SuperXDashPlugin.AppsList.openApp(model.url)
+            }
         }
     }
 

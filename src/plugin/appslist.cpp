@@ -28,6 +28,9 @@
 #include <QDebug>
 #include <QJsonArray>
 #include <QJsonObject>
+#include <QProcess>
+#include <KService>
+#include <KIOWidgets/KRun>
 
 AppsList::AppsList(QObject *parent) : QObject(parent) {}
 
@@ -40,14 +43,22 @@ void AppsList::appsList() {
             QJsonArray apps;
 
             for (KIO::UDSEntry app : list) {
-              QJsonObject obj = {{"name", app.stringValue(app.UDS_NAME)},
-                                 {"icon", app.stringValue(app.UDS_ICON_NAME)},
-                                 {"url", app.stringValue(app.UDS_LOCAL_PATH)},
-                                 {"mimeType", app.stringValue(app.UDS_MIME_TYPE)}};
+              QJsonObject obj = {
+                  {"name", app.stringValue(app.UDS_NAME)},
+                  {"icon", app.stringValue(app.UDS_ICON_NAME)},
+                  {"url", app.stringValue(app.UDS_LOCAL_PATH)},
+                  {"mimeType", app.stringValue(app.UDS_MIME_TYPE)}};
 
               apps.append(obj);
             }
 
             emit appsListResult(apps);
           });
+}
+
+void AppsList::openApp(QString path) {
+  qDebug() << path;
+
+  KService service(path);
+  KRun::runApplication(service, {}, nullptr);
 }
