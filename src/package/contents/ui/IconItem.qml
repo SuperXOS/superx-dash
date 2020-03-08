@@ -1,4 +1,5 @@
-// clang-format off
+
+
 /********************************************************************************
  *    superx-dash is a part of SuperX Open Source Project                       *
  *                                                                              *
@@ -19,43 +20,52 @@
  *    along with this program.  If not, see <https://www.gnu.org/licenses/>.    *
  *                                                                              *
  ********************************************************************************/
-// clang-format on
+import QtQuick 2.14
+import QtQuick.Layouts 1.14
+import QtQuick.Controls 2.14
 
-#include "superxdashplugin.h"
+import org.kde.kirigami 2.7 as Kirigami
 
-#include <QDebug>
-#include <QQmlEngine>
 
-#include "appslist.h"
-#include "systemfavourites.h"
+/**
+  * Provides the delegate to display an application item
+  */
+Item {
+    property var icon
+    property var label
 
-AppsList *appslist = nullptr;
-SystemFavourites *systemFavourites = nullptr;
+    signal clicked
 
-void SuperXDashPlugin::registerTypes(const char *uri) {
-  Q_ASSERT(QLatin1String(uri) == QLatin1String("com.superxos.dash"));
+    id: appItem
 
-  qDebug() << "Registering qml types";
+    Kirigami.Icon {
+        id: appIcon
+        width: parent.width - 40
+        height: parent.height - 40
+        anchors.horizontalCenter: parent.horizontalCenter
+        source: icon
+    }
+    Text {
+        id: appName
 
-  qmlRegisterSingletonType<AppsList>(
-      uri, 1, 0, "AppsList", [=](QQmlEngine *e, QJSEngine *j) -> QObject * {
-        Q_UNUSED(j)
-
-        if (appslist == nullptr) {
-          appslist = new AppsList(e);
+        anchors {
+            top: appIcon.bottom
+            topMargin: 20
+            left: parent.left
+            leftMargin: 5
+            right: parent.right
+            rightMargin: 5
         }
-
-        return appslist;
-      });
-  qmlRegisterSingletonType<AppsList>(
-      uri, 1, 0, "SystemFavourites",
-      [=](QQmlEngine *e, QJSEngine *j) -> QObject * {
-        Q_UNUSED(j)
-
-        if (systemFavourites == nullptr) {
-          systemFavourites = new SystemFavourites(e);
+        text: label
+        color: "#ff444444"
+        elide: Text.ElideRight
+        horizontalAlignment: Text.AlignHCenter
+        verticalAlignment: Text.AlignVCenter
+    }
+    MouseArea {
+        anchors.fill: parent
+        onClicked: {
+            appItem.clicked()
         }
-
-        return systemFavourites;
-      });
+    }
 }

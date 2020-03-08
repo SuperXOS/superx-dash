@@ -2,10 +2,11 @@ set(PLUGIN_SRCS
 
     superxdashplugin.cpp
     appslist.cpp
+    systemfavourites.cpp
 
     ### DEBUG
     ../package/contents/ui/main.qml
-    ../package/contents/ui/AppItem.qml
+    ../package/contents/ui/IconItem.qml
     ../package/contents/ui/Dash.qml
     ###
 )

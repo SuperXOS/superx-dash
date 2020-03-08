@@ -1,5 +1,4 @@
-
-
+// clang-format off
 /********************************************************************************
  *    superx-dash is a part of SuperX Open Source Project                       *
  *                                                                              *
@@ -20,55 +19,29 @@
  *    along with this program.  If not, see <https://www.gnu.org/licenses/>.    *
  *                                                                              *
  ********************************************************************************/
-import QtQuick 2.14
-import QtQuick.Layouts 1.14
-import QtQuick.Controls 2.14
+// clang-format on
 
-import org.kde.kirigami 2.7 as Kirigami
+#ifndef PLUGIN_SYSTEMFAVOURITES_H
+#define PLUGIN_SYSTEMFAVOURITES_H
+
+#include <QDBusInterface>
+#include <QObject>
+
+class SystemFavourites : public QObject {
+ Q_OBJECT
+
+ public:
+  SystemFavourites(QObject *parent = nullptr);
+
+private:
+    QDBusInterface *ksmDBusInterface;
+
+ public slots:
+  void onShutdownClicked();
+  void onLogoutClicked();
+  void onRebootClicked();
+};
+
+#endif
 
 
-/**
-  * Provides the delegate to display an application item
-  */
-Item {
-    property var cellWidth
-    property var cellHeight
-
-    signal openApp
-
-    id: appItem
-    width: cellWidth
-    height: cellHeight
-
-    Kirigami.Icon {
-        id: appIcon
-        width: parent.width - 40
-        height: parent.height - 40
-        anchors.horizontalCenter: parent.horizontalCenter
-        source: model.icon
-    }
-    Text {
-        id: appName
-
-        anchors {
-            top: appIcon.bottom
-            topMargin: 20
-            left: parent.left
-            leftMargin: 5
-            right: parent.right
-            rightMargin: 5
-        }
-        text: model.name
-        color: "#ff444444"
-        elide: Text.ElideRight
-        horizontalAlignment: Text.AlignHCenter
-        verticalAlignment: Text.AlignVCenter
-    }
-    MouseArea {
-        anchors.fill: parent
-        onClicked: {
-            parent.GridView.view.currentIndex = index
-            openApp()
-        }
-    }
-}

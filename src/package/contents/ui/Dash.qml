@@ -38,13 +38,33 @@ Rectangle {
     anchors.fill: parent
     color: "#ffffff"
 
-    TextInput {
-        id: queryField
-        x: 250
+    RowLayout {
         z: 1000
-        width: 200
-        height: 50
-        text: "firefox"
+        visible: true
+
+        IconItem {
+            width: 100
+            height: 100
+            icon: "system-shutdown"
+            label: "Shutdown"
+            onClicked: SuperXDashPlugin.SystemFavourites.onShutdownClicked()
+        }
+
+        IconItem {
+            width: 100
+            height: 100
+            icon: "system-log-out"
+            label: "Logout"
+            onClicked: SuperXDashPlugin.SystemFavourites.onLogoutClicked()
+        }
+
+        IconItem {
+            width: 100
+            height: 100
+            icon: "system-reboot"
+            label: "Reboot"
+            onClicked: SuperXDashPlugin.SystemFavourites.onRebootClicked()
+        }
     }
 
     Milou.ResultsModel {
@@ -52,7 +72,18 @@ Rectangle {
         queryString: queryField.text
     }
 
+    TextInput {
+        id: queryField
+        visible: false
+        x: 250
+        z: 1000
+        width: 200
+        height: 50
+        text: "firefox"
+    }
+
     ColumnLayout {
+        visible: false
         Repeater {
             model: krunnerResultsModel
 
@@ -120,10 +151,13 @@ Rectangle {
             color: "lightsteelblue"
         }
 
-        delegate: AppItem {
-            cellWidth: appsGrid.cellWidth - 30
-            cellHeight: appsGrid.cellHeight - 30
-            onOpenApp: {
+        delegate: IconItem {
+            width: appsGrid.cellWidth - 30
+            height: appsGrid.cellHeight - 30
+            icon: model.icon
+            label: model.name
+            onClicked: {
+                parent.view.currentIndex = index
                 SuperXDashPlugin.AppsList.openApp(model.url)
             }
         }
