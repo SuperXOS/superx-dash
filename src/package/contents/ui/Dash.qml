@@ -1,3 +1,5 @@
+
+
 /********************************************************************************
  *    superx-dash is a part of SuperX Open Source Project                       *
  *                                                                              *
@@ -18,13 +20,15 @@
  *    along with this program.  If not, see <https://www.gnu.org/licenses/>.    *
  *                                                                              *
  ********************************************************************************/
-
 import QtQuick 2.14
 import QtQuick.Layouts 1.14
 import QtQuick.Controls 2.14
 
-import org.kde.kirigami 2.4 as Kirigami
+import org.kde.kirigami 2.7 as Kirigami
 import com.superxos.dash 1.0 as SuperXDashPlugin
+
+import org.kde.milou 0.3 as Milou
+
 
 /**
   * Master element of the Dashboard
@@ -32,7 +36,43 @@ import com.superxos.dash 1.0 as SuperXDashPlugin
 Rectangle {
     id: root
     anchors.fill: parent
-    color: "#ffffffff"
+    color: "#ffffff"
+
+    TextInput {
+        id: queryField
+        x: 250
+        z: 1000
+        width: 200
+        height: 50
+        text: "firefox"
+    }
+
+    Milou.ResultsModel {
+        id: krunnerResultsModel
+        queryString: queryField.text
+    }
+
+    ColumnLayout {
+        Repeater {
+            model: krunnerResultsModel
+
+            RowLayout {
+                Kirigami.Icon {
+                    id: typePixmap
+                    width: 50
+                    height: 50
+
+                    source: model.decoration
+                }
+
+                Label {
+                    text: model.display
+                    color: "#000000"
+                }
+            }
+        }
+    }
+
 
     /**
       * Model for storing list of installed applications.
@@ -48,6 +88,7 @@ Rectangle {
         id: scrollArea
         anchors.fill: parent
 
+
         /**
           * Handle Scroll event for pagination logic
           */
@@ -57,12 +98,14 @@ Rectangle {
         }
     }
 
+
     /**
       * Gridview for listing the installed applications
       */
     GridView {
         id: appsGrid
         anchors.fill: parent
+        visible: false
 
         cellWidth: 130
         cellHeight: 130
@@ -79,7 +122,7 @@ Rectangle {
 
         delegate: AppItem {
             cellWidth: appsGrid.cellWidth - 30
-            cellHeight: appsGrid.cellHeight - 30            
+            cellHeight: appsGrid.cellHeight - 30
             onOpenApp: {
                 SuperXDashPlugin.AppsList.openApp(model.url)
             }
@@ -89,30 +132,32 @@ Rectangle {
     Connections {
         target: SuperXDashPlugin.AppsList
 
+
         /**
           * Receive and inset applications list to model for rendering.
           */
         onAppsListResult: {
-            apps.forEach((e) => {
-                             if (e.mimeType === "inode/directory") {
-                                 return;
-                             } else if (e.name === ".") {
-                                 return;
-                             }
+            apps.forEach(function (e) {
+                if (e.mimeType === "inode/directory") {
+                    return
+                } else if (e.name === ".") {
+                    return
+                }
 
-                             appsModel.append({
-                                name: e.name.split("/").pop(),
-                                icon: e.icon,
-                                url: e.url
-                             });
-                         })
+                appsModel.append({
+                                     "name": e.name.split("/").pop(),
+                                     "icon": e.icon,
+                                     "url": e.url
+                                 })
+            })
         }
     }
+
 
     /**
       * Fetch the applications list when QML gets loaded
       */
     Component.onCompleted: {
-        SuperXDashPlugin.AppsList.appsList();
+        SuperXDashPlugin.AppsList.appsList()
     }
 }
