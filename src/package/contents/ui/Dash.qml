@@ -26,7 +26,7 @@ import QtQuick.Controls 2.14
 
 import org.kde.kirigami 2.7 as Kirigami
 import com.superxos.dash 1.0 as SuperXDashPlugin
-
+import org.kde.plasma.plasmoid 2.0
 import org.kde.milou 0.3 as Milou
 
 
@@ -40,7 +40,7 @@ Rectangle {
 
     RowLayout {
         z: 1000
-        visible: true
+        visible: false
 
         IconItem {
             width: 100
@@ -70,6 +70,7 @@ Rectangle {
     Milou.ResultsModel {
         id: krunnerResultsModel
         queryString: queryField.text
+        limit: 10
     }
 
     TextInput {
@@ -83,7 +84,7 @@ Rectangle {
     }
 
     ColumnLayout {
-        visible: false
+        visible: queryField.visible
         Repeater {
             model: krunnerResultsModel
 
@@ -115,6 +116,15 @@ Rectangle {
         // { name, icon, url }
     }
 
+    /**
+      * Model for storing favorite applications.
+      */
+    ListModel {
+        id: favoritesModel
+
+        // { name, icon, url }
+    }
+
     MouseArea {
         id: scrollArea
         anchors.fill: parent
@@ -131,12 +141,92 @@ Rectangle {
 
 
     /**
+      * Gridview for listing favourite applications
+      */
+    GridView {
+        id: favoritesGrid
+        anchors {
+            top: parent.top
+            left: parent.left
+            right: parent.right
+        }
+
+        height: 200
+        visible: true
+
+        cellWidth: 130
+        cellHeight: 130
+        focus: true
+        model: favoritesModel
+        snapMode: GridView.SnapPosition
+        flow: GridView.FlowTopToBottom
+
+        highlight: Rectangle {
+            width: parent.cellWidth
+            height: parent.cellHeight
+            color: "lightsteelblue"
+        }
+
+        delegate: IconItem {
+            width: favoritesGrid.cellWidth - 30
+            height: favoritesGrid.cellHeight - 30
+            icon: model.icon
+            label: model.name
+            contextMenu: Menu {
+                MenuItem {
+                    text: "Open"
+                    onClicked: {
+                        appItem.handleAppClick(model.url);
+                    }
+                }
+
+                MenuItem {
+                    text: "Remove from Favourites"
+                    onClicked: {
+                        var favoritesJsonArray = JSON.parse(plasmoid.configuration.favorites);
+
+                        for (var index in favoritesJsonArray) {
+                            if (favoritesJsonArray[index].url === model.url) {
+                                appsModel.insert(0, {
+                                                     name: favoritesJsonArray[index].name,
+                                                     icon: favoritesJsonArray[index].icon,
+                                                     url: favoritesJsonArray[index].url
+                                                 });
+                                favoritesModel.remove(index);
+                                listModelSort(appsModel, (a, b) => a.name.localeCompare(b.name));
+                                listModelSort(favoritesModel, (a, b) => a.name.localeCompare(b.name));
+                                favoritesJsonArray.splice(index, 1);
+                                break;
+                            }
+                        }
+
+                        plasmoid.configuration.favorites = JSON.stringify(favoritesJsonArray);
+                    }
+                }
+            }
+            onClicked: {
+                handleAppClick(model.url);
+            }
+
+            function handleAppClick(url) {
+                appsGrid.currentIndex = index;
+                SuperXDashPlugin.AppsList.openApp(url);
+            }
+        }
+    }
+
+    /**
       * Gridview for listing the installed applications
       */
     GridView {
         id: appsGrid
-        anchors.fill: parent
-        visible: false
+        anchors {
+            top: favoritesGrid.bottom
+            left: parent.left
+            right: parent.right
+            bottom: parent.bottom
+        }
+        visible: favoritesGrid.visible
 
         cellWidth: 130
         cellHeight: 130
@@ -152,13 +242,45 @@ Rectangle {
         }
 
         delegate: IconItem {
+            id: appItem
             width: appsGrid.cellWidth - 30
             height: appsGrid.cellHeight - 30
             icon: model.icon
             label: model.name
+            contextMenu: Menu {
+                MenuItem {
+                    text: "Open"
+                    onClicked: {
+                        appItem.handleAppClick(model.url);
+                    }
+                }
+
+                MenuItem {
+                    text: "Add to Favourites"
+                    onClicked: {
+                        var favoritesJsonArray = plasmoid.configuration.favorites && JSON.parse(plasmoid.configuration.favorites) || [];
+                        var modelJson = {
+                            name: model.name,
+                            icon: model.icon,
+                            url: model.url
+                        };
+
+                        favoritesJsonArray.push(modelJson);
+                        favoritesModel.append(modelJson);
+                        listModelSort(appsModel, (a, b) => a.name.localeCompare(b.name));
+                        listModelSort(favoritesModel, (a, b) => a.name.localeCompare(b.name));
+                        appsModel.remove(index)
+                        plasmoid.configuration.favorites = JSON.stringify(favoritesJsonArray);
+                    }
+                }
+            }
             onClicked: {
-                parent.view.currentIndex = index
-                SuperXDashPlugin.AppsList.openApp(model.url)
+                handleAppClick(model.url);
+            }
+
+            function handleAppClick(url) {
+                appsGrid.currentIndex = index;
+                SuperXDashPlugin.AppsList.openApp(url);
             }
         }
     }
@@ -178,12 +300,22 @@ Rectangle {
                     return
                 }
 
+                var favoritesJsonArray = plasmoid.configuration.favorites && JSON.parse(plasmoid.configuration.favorites) || [];
+
+                for (var index in favoritesJsonArray) {
+                    if (favoritesJsonArray[index].url === e.url) {
+                        return;
+                    }
+                }
+
                 appsModel.append({
                                      "name": e.name.split("/").pop(),
                                      "icon": e.icon,
                                      "url": e.url
                                  })
             })
+
+            listModelSort(appsModel, (a, b) => a.name.localeCompare(b.name));
         }
     }
 
@@ -192,6 +324,30 @@ Rectangle {
       * Fetch the applications list when QML gets loaded
       */
     Component.onCompleted: {
+        var favoritesJsonArray = plasmoid.configuration.favorites && JSON.parse(plasmoid.configuration.favorites) || [];
+
+        for (var index in favoritesJsonArray) {
+            favoritesModel.append({
+                                      name: favoritesJsonArray[index].name,
+                                      icon: favoritesJsonArray[index].icon,
+                                      url: favoritesJsonArray[index].url
+                                  });
+        }
+
+        listModelSort(favoritesModel, (a, b) => a.name.localeCompare(b.name));
         SuperXDashPlugin.AppsList.appsList()
+    }
+
+    function listModelSort(listModel, compareFunction) {
+        let indexes = [ ...Array(listModel.count).keys() ]
+        indexes.sort( (a, b) => compareFunction( listModel.get(a), listModel.get(b) ) )
+        let sorted = 0
+        while ( sorted < indexes.length && sorted === indexes[sorted] ) sorted++
+        if ( sorted === indexes.length ) return
+        for ( let i = sorted; i < indexes.length; i++ ) {
+            listModel.move( indexes[i], listModel.count - 1, 1 )
+            listModel.insert( indexes[i], { } )
+        }
+        listModel.remove( sorted, indexes.length - sorted )
     }
 }

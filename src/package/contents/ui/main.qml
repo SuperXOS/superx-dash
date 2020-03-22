@@ -35,10 +35,10 @@ Item {
     Plasmoid.switchWidth: Plasmoid.fullRepresentationItem.Layout.minimumWidth
     Plasmoid.switchHeight: Plasmoid.fullRepresentationItem.Layout.minimumHeight
 
-    Plasmoid.preferredRepresentation: Plasmoid.fullRepresentation
     Plasmoid.fullRepresentation: dash
+    Plasmoid.preferredRepresentation: Plasmoid.fullRepresentation
 
-    Plasmoid.icon: plasmoid.configuration.icon
+    Plasmoid.icon: "video-x-matroska"
 
     Dash {
         id: dash

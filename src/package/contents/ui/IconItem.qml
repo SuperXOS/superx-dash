@@ -31,12 +31,13 @@ import org.kde.kirigami 2.7 as Kirigami
   * Provides the delegate to display an application item
   */
 Item {
+    id: appItem
+
     property var icon
     property var label
+    property Menu contextMenu;
 
     signal clicked
-
-    id: appItem
 
     Kirigami.Icon {
         id: appIcon
@@ -45,6 +46,7 @@ Item {
         anchors.horizontalCenter: parent.horizontalCenter
         source: icon
     }
+
     Text {
         id: appName
 
@@ -62,10 +64,18 @@ Item {
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
     }
+
     MouseArea {
         anchors.fill: parent
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
         onClicked: {
-            appItem.clicked()
+            mouse.accepted = true;
+
+            if (contextMenu && mouse.button === Qt.RightButton) {
+                contextMenu.popup();
+            } else if (mouse.button === Qt.LeftButton) {
+                appItem.clicked();
+            }
         }
     }
 }
