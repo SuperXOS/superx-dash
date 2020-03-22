@@ -58,3 +58,7 @@ CMakeLists.txt.user*
 
 # Bazaar files
 .bzr
+
+# KDevelop files
+.kdev*
+*.kdev*
