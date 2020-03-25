@@ -33,8 +33,8 @@ import org.kde.kirigami 2.7 as Kirigami
 Item {
     id: appItem
 
-    property var icon: "file-x-zerosize"
-    property var label: "testing"
+    property var icon
+    property var label: ""
     property Menu contextMenu;
 
     signal clicked
@@ -45,6 +45,7 @@ Item {
         height: parent.height - 40
         anchors.horizontalCenter: parent.horizontalCenter
         source: icon
+        fallback: label != "" ? "application-x-zerosize" : ""
     }
 
     Text {
@@ -69,12 +70,12 @@ Item {
         anchors.fill: parent
         acceptedButtons: Qt.LeftButton | Qt.RightButton
         onClicked: {
-            mouse.accepted = true;
-
-            if (contextMenu && mouse.button === Qt.RightButton) {
-                contextMenu.popup();
-            } else if (mouse.button === Qt.LeftButton) {
-                appItem.clicked();
+            if (label != "") {
+                if (contextMenu && mouse.button === Qt.RightButton) {
+                    contextMenu.popup();
+                } else if (mouse.button === Qt.LeftButton) {
+                    appItem.clicked();
+                }
             }
         }
     }

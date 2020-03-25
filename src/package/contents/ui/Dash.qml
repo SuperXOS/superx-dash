@@ -153,46 +153,33 @@ Rectangle {
         height: 200
         visible: true
 
-        cellWidth: 170
-        cellHeight: 170
+        cellWidth: 140
+        cellHeight: 140
         model: favoritesModel
-//         contextMenu: Menu {
-//             MenuItem {
-//                 text: "Open"
-//                 onClicked: {
-//                     appItem.handleAppClick(model.url);
-//                 }
-//             }
-// 
-//             MenuItem {
-//                 text: "Remove from Favourites"
-//                 onClicked: {
-//                     var favoritesJsonArray = JSON.parse(plasmoid.configuration.favorites);
-// 
-//                     for (var index in favoritesJsonArray) {
-//                         if (favoritesJsonArray[index].url === model.url) {
-//                             appsModel.insert(0, {
-//                                                     name: favoritesJsonArray[index].name,
-//                                                     icon: favoritesJsonArray[index].icon,
-//                                                     url: favoritesJsonArray[index].url
-//                                                 });
-//                             favoritesModel.remove(index);
-//                             listModelSort(appsModel, (a, b) => a.name.localeCompare(b.name));
-//                             listModelSort(favoritesModel, (a, b) => a.name.localeCompare(b.name));
-//                             favoritesJsonArray.splice(index, 1);
-//                             break;
-//                         }
-//                     }
-// 
-//                     plasmoid.configuration.favorites = JSON.stringify(favoritesJsonArray);
-//                 }
-//             }
-//         }
-//         onClicked: {
-//             handleAppClick(item.url);
-//         }
+        iconModelKey: "icon"
+        labelModelKey: "name"            
+        isFavorites: true
+        onRemoveFromFavorites: {
+            var favoritesJsonArray = JSON.parse(plasmoid.configuration.favorites);
 
-        function handleAppClick(url) {
+            for (var index in favoritesJsonArray) {
+                if (favoritesJsonArray[index].url === model.url) {
+                    appsModel.insert(0, {
+                                            name: favoritesJsonArray[index].name,
+                                            icon: favoritesJsonArray[index].icon,
+                                            url: favoritesJsonArray[index].url
+                                        });
+                    favoritesModel.remove(index);
+                    listModelSort(appsModel, (a, b) => a.name.localeCompare(b.name));
+                    listModelSort(favoritesModel, (a, b) => a.name.localeCompare(b.name));
+                    favoritesJsonArray.splice(index, 1);
+                    break;
+                }
+            }
+
+            plasmoid.configuration.favorites = JSON.stringify(favoritesJsonArray);
+        }
+        onClicked: {
             SuperXDashPlugin.AppsList.openApp(url);
         }
     }
@@ -207,46 +194,28 @@ Rectangle {
         }        
         visible: favoritesGrid.visible
         
-        cellWidth: 170
-        cellHeight: 170
-        model: appsModel
-//         contextMenu: Menu {
-//             MenuItem {
-//                 text: "Open"
-//                 onClicked: {
-//                     appItem.handleAppClick(model.url);
-//                 }
-//             }
-// 
-//             MenuItem {
-//                 text: "Remove from Favourites"
-//                 onClicked: {
-//                     var favoritesJsonArray = JSON.parse(plasmoid.configuration.favorites);
-// 
-//                     for (var index in favoritesJsonArray) {
-//                         if (favoritesJsonArray[index].url === model.url) {
-//                             appsModel.insert(0, {
-//                                                 name: favoritesJsonArray[index].name,
-//                                                 icon: favoritesJsonArray[index].icon,
-//                                                 url: favoritesJsonArray[index].url
-//                                             });
-//                             favoritesModel.remove(index);
-//                             listModelSort(appsModel, (a, b) => a.name.localeCompare(b.name));
-//                             listModelSort(favoritesModel, (a, b) => a.name.localeCompare(b.name));
-//                             favoritesJsonArray.splice(index, 1);
-//                             break;
-//                         }
-//                     }
-// 
-//                     plasmoid.configuration.favorites = JSON.stringify(favoritesJsonArray);
-//                 }
-//             }
-//         }
-//         onClicked: {
-//             handleAppClick(model.url);
-//         }
+        cellWidth: 140
+        cellHeight: 140
+        model: appsModel            
+        iconModelKey: "icon"
+        labelModelKey: "name"
+        isFavorites: false
+        onAddToFavorites: {
+            var favoritesJsonArray = plasmoid.configuration.favorites && JSON.parse(plasmoid.configuration.favorites) || [];
+            var modelJson = {
+                name: model.name,
+                icon: model.icon,
+                url: model.url
+            };
 
-        function handleAppClick(url) {
+            favoritesJsonArray.push(modelJson);
+            favoritesModel.append(modelJson);
+            listModelSort(appsModel, (a, b) => a.name.localeCompare(b.name));
+            listModelSort(favoritesModel, (a, b) => a.name.localeCompare(b.name));
+            appsModel.remove(index)
+            plasmoid.configuration.favorites = JSON.stringify(favoritesJsonArray);
+        }
+        onClicked: {
             SuperXDashPlugin.AppsList.openApp(url);
         }
     }

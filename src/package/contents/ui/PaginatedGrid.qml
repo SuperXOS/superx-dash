@@ -29,101 +29,88 @@ Item {
     property int cellWidth
     property int cellHeight
     property ListModel model
-    property Menu contextMenu
+    property string iconModelKey
+    property string labelModelKey
+    property var contextMenuItems
+    property bool isFavorites
     
+    property int rows: Math.floor(pageHolder.height/root.cellHeight)
+    property int cols: Math.floor(pageHolder.width/root.cellWidth)
+    property int pages: Math.ceil(model.count/(rows*cols))
+    property int itemsPerPage: rows*cols
+    
+    signal clicked(var model)
+    signal addToFavorites(var model, var index)
+    signal removeFromFavorites(var model, var index)
+    
+    Connections {
+        target: root
+        onModelChanged: {
+            console.log("Model Changed")
+        }
+    }
+    
+//     ListView {
+//         model: root.model
+//         visible: false
+//         onAdd: {
+//             calculate()
+//         }
+//         onRemove: {
+//             calculate()
+//         }
+//         
+//         function calculate() {
+//             root.rows= Math.floor(pageHolder.height/root.cellHeight);
+//             root.cols= Math.floor(pageHolder.width/root.cellWidth);
+//             root.pages= Math.ceil(model.count/(rows*cols));
+//             root.itemsPerPage= rows*cols;
+//         }
+//     }
     
     ListView {
         id: pageHolder
+        
         anchors.fill: parent
         orientation: ListView.Horizontal
         snapMode: ListView.SnapOneItem
+        model: pages
             
-//         Repeater {
-            model: calculatePages()
+        delegate: GridLayout {
+            id: grid
+            property int startIndex: index*itemsPerPage
             
-            /**
-            * Gridview for listing the installed applications
-            */
-            delegate: GridLayout {
-                property int startIndex: index*calculateItemsPerPage()
-                
-                width: pageHolder.width
-                height: pageHolder.height
-                columns: calculateColumns()
-
-    //             highlight: Rectangle {
-    //                 width: parent.cellWidth
-    //                 height: parent.cellHeight
-    //                 color: "lightsteelblue"
-    //             }
-
-                Repeater {
-                    model: calculateItemsPerPage()
-                    IconItem {
-                        Layout.fillHeight: true
-                        Layout.fillWidth: true 
-                        Layout.margins: 20
-                        icon: root.model.get(startIndex + index).icon
-                        label: root.model.get(startIndex + index).name
-                    }
+            width: pageHolder.width
+            height: pageHolder.height
+            columns: cols
+            
+            Menu {
+                id: _ctxMenu
+                MenuItem {
+                    text: "Open"
+                    onClicked: root.clicked(root.model.get(startIndex+index))
+                }
+                MenuItem {
+                    text: isFavorites ? "Remove from Favourites" : "Add to Favourites"
+                    onClicked: isFavorites ? root.removeFromFavorites(root.model.get(startIndex+index), startIndex+index) : root.addToFavorites(root.model.get(startIndex+index), startIndex+index)
                 }
             }
-//         }
-    }
-    
-//     Timer {
-//         id: startTimer
-//         interval: 100
-//         repeat: false
-//         onTriggered: {
-//             pageRepeater.model = calculatePages();
-//             console.log(">>>", calculateItemsPerPage());
-//         }
-//     }
-    
-//     Component.onCompleted: startTimer.start()
-    
-//     function updateMeasurements() {
-//         var rows = Math.floor(pageHolder.height/root.cellHeight);
-//         var cols = Math.floor(pageHolder.width/root.cellWidth);
-// 
-//         grid.columns = cols;
-//         grid.width = cols*root.cellWidth;
-//         gridRepeater.model = generateDisplayModel(0, rows*cols);
-//     }
-    
-    function calculatePages() {
-        var rows = Math.floor(pageHolder.height/root.cellHeight);
-        var cols = Math.floor(pageHolder.width/root.cellWidth);
-        
-        return Math.floor(model.count/(rows*cols));
-    }
-    
-    function calculateColumns() {
-        var cols = Math.floor(pageHolder.width/root.cellWidth);
-        
-        return cols;
-    }
-    
-    function calculateItemsPerPage() {
-        var rows = Math.floor(pageHolder.height/root.cellHeight);
-        var cols = Math.floor(pageHolder.width/root.cellWidth);
-        
-        return rows*cols;
-    }
-    /*
-    function generateDisplayModel(start, count) {
-        var displayModel = Qt.createQmlObject("import QtQuick 2.14; ListModel {}", root);
-        
-        for (var i=start; i<start+count; i++) {
-            console.log(i);
-            if (i == root.model.count) {
-                break;
-            }
             
-            displayModel.append(root.model.get(i));
+            Repeater {
+                id: gridItemRepeater
+                model: itemsPerPage
+                delegate: IconItem {                    
+                    id: gridItem
+                    
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true 
+                    Layout.margins: 20
+                    icon: root.model.get(startIndex+index) ? root.model.get(startIndex+index)[iconModelKey] : ""
+                    label: root.model.get(startIndex+index) ? root.model.get(startIndex+index)[labelModelKey] : ""
+                    contextMenu: _ctxMenu
+                    onClicked: root.clicked(root.model.get(startIndex+index))
+                }
+            }
         }
-        
-        return displayModel;
-    }*/
+    }
 }
