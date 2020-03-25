@@ -36,7 +36,7 @@ import org.kde.milou 0.3 as Milou
 Rectangle {
     id: root
     anchors.fill: parent
-    color: "#ffffff"
+    color: Qt.rgba(0,0,0,0.7)
 
     RowLayout {
         z: 1000
@@ -125,163 +125,129 @@ Rectangle {
         // { name, icon, url }
     }
 
-    MouseArea {
-        id: scrollArea
-        anchors.fill: parent
-
-
-        /**
-          * Handle Scroll event for pagination logic
-          */
-        onWheel: {
-            // TODO : Implement pagination functionality
-            console.log(wheel.angleDelta)
-        }
-    }
+//    MouseArea {
+//        id: scrollArea
+//        anchors.fill: parent
+//
+//
+//        /**
+//          * Handle Scroll event for pagination logic
+//          */
+//        onWheel: {
+//            // TODO : Implement pagination functionality
+//            console.log(wheel.angleDelta)
+//        }
+//    }
 
 
     /**
       * Gridview for listing favourite applications
       */
-    GridView {
+    PaginatedGrid {
         id: favoritesGrid
         anchors {
             top: parent.top
             left: parent.left
             right: parent.right
         }
-
         height: 200
         visible: true
 
-        cellWidth: 130
-        cellHeight: 130
-        focus: true
+        cellWidth: 170
+        cellHeight: 170
         model: favoritesModel
-        snapMode: GridView.SnapPosition
-        flow: GridView.FlowTopToBottom
+//         contextMenu: Menu {
+//             MenuItem {
+//                 text: "Open"
+//                 onClicked: {
+//                     appItem.handleAppClick(model.url);
+//                 }
+//             }
+// 
+//             MenuItem {
+//                 text: "Remove from Favourites"
+//                 onClicked: {
+//                     var favoritesJsonArray = JSON.parse(plasmoid.configuration.favorites);
+// 
+//                     for (var index in favoritesJsonArray) {
+//                         if (favoritesJsonArray[index].url === model.url) {
+//                             appsModel.insert(0, {
+//                                                     name: favoritesJsonArray[index].name,
+//                                                     icon: favoritesJsonArray[index].icon,
+//                                                     url: favoritesJsonArray[index].url
+//                                                 });
+//                             favoritesModel.remove(index);
+//                             listModelSort(appsModel, (a, b) => a.name.localeCompare(b.name));
+//                             listModelSort(favoritesModel, (a, b) => a.name.localeCompare(b.name));
+//                             favoritesJsonArray.splice(index, 1);
+//                             break;
+//                         }
+//                     }
+// 
+//                     plasmoid.configuration.favorites = JSON.stringify(favoritesJsonArray);
+//                 }
+//             }
+//         }
+//         onClicked: {
+//             handleAppClick(item.url);
+//         }
 
-        highlight: Rectangle {
-            width: parent.cellWidth
-            height: parent.cellHeight
-            color: "lightsteelblue"
-        }
-
-        delegate: IconItem {
-            width: favoritesGrid.cellWidth - 30
-            height: favoritesGrid.cellHeight - 30
-            icon: model.icon
-            label: model.name
-            contextMenu: Menu {
-                MenuItem {
-                    text: "Open"
-                    onClicked: {
-                        appItem.handleAppClick(model.url);
-                    }
-                }
-
-                MenuItem {
-                    text: "Remove from Favourites"
-                    onClicked: {
-                        var favoritesJsonArray = JSON.parse(plasmoid.configuration.favorites);
-
-                        for (var index in favoritesJsonArray) {
-                            if (favoritesJsonArray[index].url === model.url) {
-                                appsModel.insert(0, {
-                                                     name: favoritesJsonArray[index].name,
-                                                     icon: favoritesJsonArray[index].icon,
-                                                     url: favoritesJsonArray[index].url
-                                                 });
-                                favoritesModel.remove(index);
-                                listModelSort(appsModel, (a, b) => a.name.localeCompare(b.name));
-                                listModelSort(favoritesModel, (a, b) => a.name.localeCompare(b.name));
-                                favoritesJsonArray.splice(index, 1);
-                                break;
-                            }
-                        }
-
-                        plasmoid.configuration.favorites = JSON.stringify(favoritesJsonArray);
-                    }
-                }
-            }
-            onClicked: {
-                handleAppClick(model.url);
-            }
-
-            function handleAppClick(url) {
-                appsGrid.currentIndex = index;
-                SuperXDashPlugin.AppsList.openApp(url);
-            }
+        function handleAppClick(url) {
+            SuperXDashPlugin.AppsList.openApp(url);
         }
     }
-
-    /**
-      * Gridview for listing the installed applications
-      */
-    GridView {
+    
+    PaginatedGrid {
         id: appsGrid
         anchors {
             top: favoritesGrid.bottom
             left: parent.left
             right: parent.right
             bottom: parent.bottom
-        }
+        }        
         visible: favoritesGrid.visible
-
-        cellWidth: 130
-        cellHeight: 130
-        focus: true
+        
+        cellWidth: 170
+        cellHeight: 170
         model: appsModel
-        snapMode: GridView.SnapPosition
-        flow: GridView.FlowTopToBottom
+//         contextMenu: Menu {
+//             MenuItem {
+//                 text: "Open"
+//                 onClicked: {
+//                     appItem.handleAppClick(model.url);
+//                 }
+//             }
+// 
+//             MenuItem {
+//                 text: "Remove from Favourites"
+//                 onClicked: {
+//                     var favoritesJsonArray = JSON.parse(plasmoid.configuration.favorites);
+// 
+//                     for (var index in favoritesJsonArray) {
+//                         if (favoritesJsonArray[index].url === model.url) {
+//                             appsModel.insert(0, {
+//                                                 name: favoritesJsonArray[index].name,
+//                                                 icon: favoritesJsonArray[index].icon,
+//                                                 url: favoritesJsonArray[index].url
+//                                             });
+//                             favoritesModel.remove(index);
+//                             listModelSort(appsModel, (a, b) => a.name.localeCompare(b.name));
+//                             listModelSort(favoritesModel, (a, b) => a.name.localeCompare(b.name));
+//                             favoritesJsonArray.splice(index, 1);
+//                             break;
+//                         }
+//                     }
+// 
+//                     plasmoid.configuration.favorites = JSON.stringify(favoritesJsonArray);
+//                 }
+//             }
+//         }
+//         onClicked: {
+//             handleAppClick(model.url);
+//         }
 
-        highlight: Rectangle {
-            width: parent.cellWidth
-            height: parent.cellHeight
-            color: "lightsteelblue"
-        }
-
-        delegate: IconItem {
-            id: appItem
-            width: appsGrid.cellWidth - 30
-            height: appsGrid.cellHeight - 30
-            icon: model.icon
-            label: model.name
-            contextMenu: Menu {
-                MenuItem {
-                    text: "Open"
-                    onClicked: {
-                        appItem.handleAppClick(model.url);
-                    }
-                }
-
-                MenuItem {
-                    text: "Add to Favourites"
-                    onClicked: {
-                        var favoritesJsonArray = plasmoid.configuration.favorites && JSON.parse(plasmoid.configuration.favorites) || [];
-                        var modelJson = {
-                            name: model.name,
-                            icon: model.icon,
-                            url: model.url
-                        };
-
-                        favoritesJsonArray.push(modelJson);
-                        favoritesModel.append(modelJson);
-                        listModelSort(appsModel, (a, b) => a.name.localeCompare(b.name));
-                        listModelSort(favoritesModel, (a, b) => a.name.localeCompare(b.name));
-                        appsModel.remove(index)
-                        plasmoid.configuration.favorites = JSON.stringify(favoritesJsonArray);
-                    }
-                }
-            }
-            onClicked: {
-                handleAppClick(model.url);
-            }
-
-            function handleAppClick(url) {
-                appsGrid.currentIndex = index;
-                SuperXDashPlugin.AppsList.openApp(url);
-            }
+        function handleAppClick(url) {
+            SuperXDashPlugin.AppsList.openApp(url);
         }
     }
 

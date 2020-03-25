@@ -33,8 +33,8 @@ import org.kde.kirigami 2.7 as Kirigami
 Item {
     id: appItem
 
-    property var icon
-    property var label
+    property var icon: "file-x-zerosize"
+    property var label: "testing"
     property Menu contextMenu;
 
     signal clicked
@@ -59,7 +59,7 @@ Item {
             rightMargin: 5
         }
         text: label
-        color: "#ff444444"
+        color: "#ffffffff"
         elide: Text.ElideRight
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter

@@ -32,13 +32,13 @@ Item {
 
     anchors.fill: parent
 
-    Plasmoid.switchWidth: Plasmoid.fullRepresentationItem.Layout.minimumWidth
-    Plasmoid.switchHeight: Plasmoid.fullRepresentationItem.Layout.minimumHeight
+    Plasmoid.switchWidth: 250
+    Plasmoid.switchHeight: 250
 
-    Plasmoid.fullRepresentation: dash
-    Plasmoid.preferredRepresentation: Plasmoid.fullRepresentation
+//     Plasmoid.fullRepresentation: dash
+//     Plasmoid.preferredRepresentation: Plasmoid.fullRepresentation
 
-    Plasmoid.icon: "video-x-matroska"
+    Plasmoid.icon: "start-here-kde"
 
     Dash {
         id: dash
