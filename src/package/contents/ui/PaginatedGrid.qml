@@ -31,8 +31,6 @@ Item {
     property ListModel model
     property string iconModelKey
     property string labelModelKey
-    property var contextMenuItems
-    property bool isFavorites
     
     property int rows: Math.floor(pageHolder.height/root.cellHeight)
     property int cols: Math.floor(pageHolder.width/root.cellWidth)
@@ -40,8 +38,7 @@ Item {
     property int itemsPerPage: rows*cols
     
     signal clicked(var model)
-    signal addToFavorites(var model, var index)
-    signal removeFromFavorites(var model, var index)
+    signal openContextMenu(int index);
     
     Connections {
         target: root
@@ -49,24 +46,6 @@ Item {
             console.log("Model Changed")
         }
     }
-    
-//     ListView {
-//         model: root.model
-//         visible: false
-//         onAdd: {
-//             calculate()
-//         }
-//         onRemove: {
-//             calculate()
-//         }
-//         
-//         function calculate() {
-//             root.rows= Math.floor(pageHolder.height/root.cellHeight);
-//             root.cols= Math.floor(pageHolder.width/root.cellWidth);
-//             root.pages= Math.ceil(model.count/(rows*cols));
-//             root.itemsPerPage= rows*cols;
-//         }
-//     }
     
     ListView {
         id: pageHolder
@@ -84,21 +63,11 @@ Item {
             height: pageHolder.height
             columns: cols
             
-            Menu {
-                id: _ctxMenu
-                MenuItem {
-                    text: "Open"
-                    onClicked: root.clicked(root.model.get(startIndex+index))
-                }
-                MenuItem {
-                    text: isFavorites ? "Remove from Favourites" : "Add to Favourites"
-                    onClicked: isFavorites ? root.removeFromFavorites(root.model.get(startIndex+index), startIndex+index) : root.addToFavorites(root.model.get(startIndex+index), startIndex+index)
-                }
-            }
-            
             Repeater {
                 id: gridItemRepeater
                 model: itemsPerPage
+                property int itemIndex: index
+
                 delegate: IconItem {                    
                     id: gridItem
                     
@@ -107,10 +76,22 @@ Item {
                     Layout.margins: 20
                     icon: root.model.get(startIndex+index) ? root.model.get(startIndex+index)[iconModelKey] : ""
                     label: root.model.get(startIndex+index) ? root.model.get(startIndex+index)[labelModelKey] : ""
-                    contextMenu: _ctxMenu
+                    onOpenContextMenu: root.openContextMenu(startIndex+index)
                     onClicked: root.clicked(root.model.get(startIndex+index))
                 }
             }
         }
+    }
+
+    function reset() {
+        root.rows = 0;
+        root.cols = 0;
+        root.pages = 0;
+        root.itemsPerPage = 0;
+
+        root.rows = Math.floor(pageHolder.height/root.cellHeight);
+        root.cols = Math.floor(pageHolder.width/root.cellWidth);
+        root.pages = Math.ceil(model.count/(rows*cols));
+        root.itemsPerPage = rows*cols;
     }
 }

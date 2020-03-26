@@ -35,9 +35,10 @@ Item {
 
     property var icon
     property var label: ""
-    property Menu contextMenu;
+//    property Menu contextMenu;
 
     signal clicked
+    signal openContextMenu
 
     Kirigami.Icon {
         id: appIcon
@@ -59,7 +60,7 @@ Item {
             right: parent.right
             rightMargin: 5
         }
-        text: label
+        text: label || ""
         color: "#ffffffff"
         elide: Text.ElideRight
         horizontalAlignment: Text.AlignHCenter
@@ -71,8 +72,8 @@ Item {
         acceptedButtons: Qt.LeftButton | Qt.RightButton
         onClicked: {
             if (label != "") {
-                if (contextMenu && mouse.button === Qt.RightButton) {
-                    contextMenu.popup();
+                if (mouse.button === Qt.RightButton) {
+                    appItem.openContextMenu();
                 } else if (mouse.button === Qt.LeftButton) {
                     appItem.clicked();
                 }

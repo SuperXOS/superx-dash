@@ -8,6 +8,9 @@ set(PLUGIN_SRCS
     ../package/contents/ui/main.qml
     ../package/contents/ui/IconItem.qml
     ../package/contents/ui/Dash.qml
+    ../package/contents/ui/PaginatedGrid.qml
+    ../package/contents/ui/AppsGrid.qml
+    ../package/contents/ui/FavoritesGrid.qml
     ###
 )
 
