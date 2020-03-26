@@ -20,63 +20,31 @@
  ********************************************************************************/
 
 import QtQuick 2.14
-import QtQuick.Layouts 1.14
 import QtQuick.Controls 2.14
 
-import org.kde.kirigami 2.7 as Kirigami
-
-
-/**
-  * Provides the delegate to display an application item
-  */
 Item {
-    id: appItem
-
-    property var icon
-    property var label: ""
-//    property Menu contextMenu;
-
-    signal clicked
-    signal openContextMenu
-
-    Kirigami.Icon {
-        id: appIcon
-        width: parent.width - 40
-        height: parent.height - 40
-        anchors.horizontalCenter: parent.horizontalCenter
-        source: icon
-        fallback: label != "" ? "application-x-zerosize" : ""
-    }
+    property alias text: t.text
+    property alias textSize: t.font.pixelSize
+    property alias textColor: t.color
 
     Text {
-        id: appName
-
+        id: t
         anchors {
-            top: appIcon.bottom
-            topMargin: 20
             left: parent.left
-            leftMargin: 5
-            right: parent.right
-            rightMargin: 5
+            leftMargin: 20
+            rightMargin: 20
         }
-        text: label || ""
-        color: "#ffffffff"
-        elide: Text.ElideRight
-        horizontalAlignment: Text.AlignHCenter
-        verticalAlignment: Text.AlignVCenter
-    }
 
-    MouseArea {
-        anchors.fill: parent
-        acceptedButtons: Qt.LeftButton | Qt.RightButton
-        onClicked: {
-            if (label != "") {
-                if (mouse.button === Qt.RightButton) {
-                    appItem.openContextMenu();
-                } else if (mouse.button === Qt.LeftButton) {
-                    appItem.clicked();
-                }
-            }
-        }
+        padding: 10
+        rightPadding: 250
     }
-}
+    Rectangle {
+        height: 1
+        anchors {
+            left: parent.left
+            right: parent.right
+            bottom: t.bottom
+        }
+        color: "#444"
+    }
+} 

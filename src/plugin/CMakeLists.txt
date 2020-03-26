@@ -5,12 +5,14 @@ set(PLUGIN_SRCS
     systemfavourites.cpp
 
     ### DEBUG
+    ../package/contents/ui/tools.js
     ../package/contents/ui/main.qml
+    ../package/contents/ui/CompactRepresentation.qml
     ../package/contents/ui/IconItem.qml
     ../package/contents/ui/Dash.qml
     ../package/contents/ui/PaginatedGrid.qml
-    ../package/contents/ui/AppsGrid.qml
-    ../package/contents/ui/FavoritesGrid.qml
+    ../package/contents/ui/AppGridContainer.qml
+    ../package/contents/ui/Heading.qml
     ###
 )
 
