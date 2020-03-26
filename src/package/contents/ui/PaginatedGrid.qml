@@ -50,6 +50,7 @@ Item {
     ListView {
         id: pageHolder
         
+        clip: true
         anchors.fill: parent
         orientation: ListView.Horizontal
         snapMode: ListView.SnapOneItem

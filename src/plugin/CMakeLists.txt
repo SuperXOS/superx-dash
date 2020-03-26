@@ -11,8 +11,10 @@ set(PLUGIN_SRCS
     ../package/contents/ui/IconItem.qml
     ../package/contents/ui/Dash.qml
     ../package/contents/ui/PaginatedGrid.qml
-    ../package/contents/ui/AppGridContainer.qml
     ../package/contents/ui/Heading.qml
+    ../package/contents/ui/AppGridContainer.qml
+    ../package/contents/ui/SystemFavoritesContainer.qml
+    ../package/contents/ui/CategoriesSidebarContainer.qml
     ###
 )
 

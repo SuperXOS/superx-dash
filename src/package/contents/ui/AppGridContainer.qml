@@ -33,7 +33,10 @@ Item {
 
         MenuItem {
             text: "Open"
-            onClicked: SuperXDashPlugin.AppsList.openApp(favoritesModel.get(_favoritesCtxMenu.index).url)
+            onClicked: {
+                SuperXDashPlugin.AppsList.openApp(favoritesModel.get(_favoritesCtxMenu.index).url);
+                toggle();
+            }
         }
         MenuItem {
             text: "Remove from Favourites"
@@ -69,7 +72,10 @@ Item {
 
         MenuItem {
             text: "Open"
-            onClicked: SuperXDashPlugin.AppsList.openApp(appsModel.get(_appsCtxMenu.index).url)
+            onClicked: {
+                SuperXDashPlugin.AppsList.openApp(appsModel.get(_appsCtxMenu.index).url);
+                toggle();
+            }
         }
         MenuItem {
             text: "Add to Favourites"
@@ -102,8 +108,6 @@ Item {
         Heading {
             Layout.fillWidth: true
             text: "Favorites"
-            textSize: 22
-            textColor: "#ffffff"
         }
 
         /**
@@ -112,7 +116,7 @@ Item {
         PaginatedGrid {
             id: favoritesGrid
             Layout.fillWidth: true
-            height: 200
+            height: 140
 
             cellWidth: 140
             cellHeight: 140
@@ -123,14 +127,15 @@ Item {
                 _favoritesCtxMenu.index = index;
                 _favoritesCtxMenu.popup();
             }
-            onClicked: SuperXDashPlugin.AppsList.openApp(model.url)
+            onClicked: {
+                SuperXDashPlugin.AppsList.openApp(model.url);
+                toggle();
+            }
         }
 
         Heading {
             Layout.fillWidth: true
             text: "Applications"
-            textSize: 22
-            textColor: "#ffffff"
         }
 
         /**
@@ -151,7 +156,10 @@ Item {
                 _appsCtxMenu.popup();
             }
 
-            onClicked: SuperXDashPlugin.AppsList.openApp(model.url)
+            onClicked: {
+                SuperXDashPlugin.AppsList.openApp(model.url);
+                toggle();
+            }
         }
     }
 }

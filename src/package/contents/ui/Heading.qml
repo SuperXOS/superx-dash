@@ -24,8 +24,8 @@ import QtQuick.Controls 2.14
 
 Item {
     property alias text: t.text
-    property alias textSize: t.font.pixelSize
-    property alias textColor: t.color
+    property real textSize: 22
+    property string textColor: "#ffffff"
 
     Text {
         id: t
@@ -34,6 +34,8 @@ Item {
             leftMargin: 20
             rightMargin: 20
         }
+        font.pixelSize: textSize
+        color: textColor
 
         padding: 10
         rightPadding: 250
@@ -45,6 +47,7 @@ Item {
             right: parent.right
             bottom: t.bottom
         }
-        color: "#444"
+        color: "#bbb"
+        visible: false
     }
 } 
