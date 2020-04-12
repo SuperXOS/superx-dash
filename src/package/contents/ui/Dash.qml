@@ -34,6 +34,8 @@ import "tools.js" as Tools
   * Master element of the Dashboard
   */
 Kicker.DashboardWindow {
+    property bool isOpen: false;
+
     backgroundColor: Qt.rgba(0,0,0,0.5)
     onKeyEscapePressed: {
         toggle();
@@ -163,5 +165,11 @@ Kicker.DashboardWindow {
             Tools.listModelSort(favoritesModel, (a, b) => a.name.localeCompare(b.name));
             SuperXDashPlugin.AppsList.appsList()
         }
+    }
+
+    function toggleDash() {
+        isOpen = !isOpen;
+        SuperXDashPlugin.Utils.showDesktop(isOpen);
+        toggle();
     }
 }

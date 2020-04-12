@@ -93,8 +93,8 @@ Item {
     Component.onCompleted: {
         dashWindow = Qt.createQmlObject("Dash {}", root);
         plasmoid.activated.connect(function() {
-            dashWindow.toggle()
-            justOpenedTimer.start()
+            dashWindow.toggleDash();
+            justOpenedTimer.start();
         })
     }
 }

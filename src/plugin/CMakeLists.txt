@@ -3,6 +3,7 @@ set(PLUGIN_SRCS
     superxdashplugin.cpp
     appslist.cpp
     systemfavourites.cpp
+    utils.cpp
 
     ### DEBUG
     ../package/contents/ui/tools.js

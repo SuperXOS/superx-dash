@@ -21,53 +21,25 @@
  ********************************************************************************/
 // clang-format on
 
-#include "superxdashplugin.h"
+#ifndef PLUGIN_UTILS_H
+#define PLUGIN_UTILS_H
 
-#include <QDebug>
-#include <QQmlEngine>
+#include <QDBusInterface>
+#include <QObject>
 
-#include "appslist.h"
-#include "systemfavourites.h"
-#include "utils.h"
+class Utils : public QObject {
+ Q_OBJECT
 
-AppsList *appslist = nullptr;
-SystemFavourites *systemFavourites = nullptr;
-Utils *utils = nullptr;
+ public:
+  Utils(QObject *parent = nullptr);
 
-void SuperXDashPlugin::registerTypes(const char *uri) {
-  Q_ASSERT(QLatin1String(uri) == QLatin1String("com.superxos.dash"));
+private:
+    QDBusInterface *plasmaShellDBusInterface;
 
-  qDebug() << "Registering qml types";
+ public slots:
+  void showDesktop(bool show);
+};
 
-  qmlRegisterSingletonType<AppsList>(
-      uri, 1, 0, "AppsList", [=](QQmlEngine *e, QJSEngine *j) -> QObject * {
-        Q_UNUSED(j)
+#endif
 
-        if (appslist == nullptr) {
-          appslist = new AppsList(e);
-        }
 
-        return appslist;
-      });
-  qmlRegisterSingletonType<SystemFavourites>(
-      uri, 1, 0, "SystemFavourites",
-      [=](QQmlEngine *e, QJSEngine *j) -> QObject * {
-        Q_UNUSED(j)
-
-        if (systemFavourites == nullptr) {
-          systemFavourites = new SystemFavourites(e);
-        }
-
-        return systemFavourites;
-      });
-  qmlRegisterSingletonType<Utils>(
-      uri, 1, 0, "Utils", [=](QQmlEngine *e, QJSEngine *j) -> QObject * {
-        Q_UNUSED(j)
-
-        if (utils == nullptr) {
-          utils = new Utils(e);
-        }
-
-        return utils;
-      });
-}

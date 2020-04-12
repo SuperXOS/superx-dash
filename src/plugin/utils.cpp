@@ -21,53 +21,32 @@
  ********************************************************************************/
 // clang-format on
 
-#include "superxdashplugin.h"
-
-#include <QDebug>
-#include <QQmlEngine>
-
-#include "appslist.h"
-#include "systemfavourites.h"
 #include "utils.h"
 
-AppsList *appslist = nullptr;
-SystemFavourites *systemFavourites = nullptr;
-Utils *utils = nullptr;
+#include <QDBusConnection>
+#include <QDBusReply>
+#include <QDebug>
 
-void SuperXDashPlugin::registerTypes(const char *uri) {
-  Q_ASSERT(QLatin1String(uri) == QLatin1String("com.superxos.dash"));
+Utils::Utils(QObject *parent) : QObject(parent) {
+  if (!QDBusConnection::sessionBus().isConnected()) {
+    fprintf(stderr,
+            "Cannot connect to the D-Bus session bus.\n"
+            "To start it, run:\n"
+            "\teval `dbus-launch --auto-syntax`\n");
 
-  qDebug() << "Registering qml types";
+    return;
+  }
 
-  qmlRegisterSingletonType<AppsList>(
-      uri, 1, 0, "AppsList", [=](QQmlEngine *e, QJSEngine *j) -> QObject * {
-        Q_UNUSED(j)
+  plasmaShellDBusInterface = new QDBusInterface(
+      "org.kde.plasmashell", "/PlasmaShell", "org.kde.PlasmaShell",
+      QDBusConnection::sessionBus(), parent);
 
-        if (appslist == nullptr) {
-          appslist = new AppsList(e);
-        }
+  if (!plasmaShellDBusInterface->isValid()) {
+    fprintf(stderr, "%s\n",
+            qPrintable(QDBusConnection::sessionBus().lastError().message()));
+  }
+}
 
-        return appslist;
-      });
-  qmlRegisterSingletonType<SystemFavourites>(
-      uri, 1, 0, "SystemFavourites",
-      [=](QQmlEngine *e, QJSEngine *j) -> QObject * {
-        Q_UNUSED(j)
-
-        if (systemFavourites == nullptr) {
-          systemFavourites = new SystemFavourites(e);
-        }
-
-        return systemFavourites;
-      });
-  qmlRegisterSingletonType<Utils>(
-      uri, 1, 0, "Utils", [=](QQmlEngine *e, QJSEngine *j) -> QObject * {
-        Q_UNUSED(j)
-
-        if (utils == nullptr) {
-          utils = new Utils(e);
-        }
-
-        return utils;
-      });
+void Utils::showDesktop(bool show) {
+  plasmaShellDBusInterface->call("setDashboardShown", show);
 }
