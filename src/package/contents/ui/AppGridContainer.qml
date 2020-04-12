@@ -23,10 +23,38 @@ import QtQuick 2.14
 import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.12
 
+import org.kde.milou 0.3 as Milou
 import com.superxos.dash 1.0 as SuperXDashPlugin
 import "tools.js" as Tools
 
 Item {
+    Milou.ResultsModel {
+        id: krunnerResultsModel
+        queryString: queryField.text
+        limit: 20
+    }
+
+//    ColumnLayout {
+//        visible: queryField.visible
+//        Repeater {
+//            model: krunnerResultsModel
+
+//            RowLayout {
+//                Kirigami.Icon {
+//                    id: typePixmap
+//                    width: 50
+//                    height: 50
+
+//                    source: model.decoration
+//                }
+
+//                Label {
+//                    text: model.display
+//                    color: "#000000"
+//                }
+//            }
+//        }
+//    }
     Menu {
         id: _favoritesCtxMenu
         property int index
@@ -105,6 +133,18 @@ Item {
         anchors.fill: parent
         spacing: 50
 
+        Item {
+            height: 70
+            Layout.fillWidth: true
+            Layout.topMargin: 50
+
+            TextArea {
+                id: queryField
+                width: 200
+                anchors.centerIn: parent
+            }
+        }
+
         Heading {
             Layout.fillWidth: true
             text: "Favorites"
@@ -145,21 +185,44 @@ Item {
             id: appsGrid
             Layout.fillWidth: true
             Layout.fillHeight: true
+            visible: !krunnerResultsGrid.visible
 
             cellWidth: 140
             cellHeight: 140
             model: appsModel
             iconModelKey: "icon"
             labelModelKey: "name"
+
             onOpenContextMenu: {
                 _appsCtxMenu.index = index;
                 _appsCtxMenu.popup();
             }
-
             onClicked: {
-                SuperXDashPlugin.AppsList.openApp(model.url);
+                SuperXDashPlugin.AppsList.openApp(model);
                 toggle();
             }
         }
+
+        /**
+          * Gridview for listing krunner results
+          */
+        GridView {
+            id: krunnerResultsGrid
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            visible: queryField.text.length > 0
+            cellWidth: 140
+            cellHeight: 140
+
+            model: krunnerResultsModel
+            delegate: IconItem {
+                id: gridItem
+                width: 100
+                height: 100
+                icon: model.decoration
+                label: model.display
+            }
+        }
+
     }
 }

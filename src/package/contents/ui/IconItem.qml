@@ -22,6 +22,7 @@
 import QtQuick 2.14
 import QtQuick.Layouts 1.14
 import QtQuick.Controls 2.14
+import QtGraphicalEffects 1.14
 
 import org.kde.kirigami 2.7 as Kirigami
 
@@ -34,7 +35,7 @@ Item {
 
     property var icon
     property var label: ""
-//    property Menu contextMenu;
+    property string color: "#00ffffff"
 
     signal clicked
     signal openContextMenu
@@ -46,6 +47,12 @@ Item {
         anchors.horizontalCenter: parent.horizontalCenter
         source: icon
         fallback: label != "" ? "application-x-zerosize" : ""
+
+        ColorOverlay {
+            anchors.fill: appIcon
+            source: appIcon
+            color: appItem.color
+        }
     }
 
     Text {
@@ -69,6 +76,7 @@ Item {
     MouseArea {
         anchors.fill: parent
         acceptedButtons: Qt.LeftButton | Qt.RightButton
+        cursorShape: Qt.PointingHandCursor
         onClicked: {
             if (label != "") {
                 if (mouse.button === Qt.RightButton) {

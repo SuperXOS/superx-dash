@@ -8,26 +8,38 @@ RowLayout {
     z: 1000
 
     IconItem {
-        width: 100
+        width: parent.width/3
         height: 100
         icon: "system-shutdown"
         label: "Shutdown"
-        onClicked: SuperXDashPlugin.SystemFavourites.onShutdownClicked()
+        color: "#ffffffff"
+        onClicked: {
+            SuperXDashPlugin.SystemFavourites.onShutdownClicked();
+            toggle();
+        }
     }
 
     IconItem {
-        width: 100
+        width: parent.width/3
         height: 100
         icon: "system-log-out"
         label: "Logout"
-        onClicked: SuperXDashPlugin.SystemFavourites.onLogoutClicked()
+        color: "#ffffffff"
+        onClicked: {
+            SuperXDashPlugin.SystemFavourites.onLogoutClicked();
+            toggle();
+        }
     }
 
     IconItem {
-        width: 100
+        width: parent.width/3
         height: 100
         icon: "system-reboot"
         label: "Reboot"
-        onClicked: SuperXDashPlugin.SystemFavourites.onRebootClicked()
+        color: "#ffffffff"
+        onClicked: {
+            SuperXDashPlugin.SystemFavourites.onRebootClicked();
+            toggle();
+        }
     }
 }

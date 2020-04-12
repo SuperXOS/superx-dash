@@ -26,7 +26,6 @@ import QtQuick.Controls 2.14
 import org.kde.kirigami 2.7 as Kirigami
 import com.superxos.dash 1.0 as SuperXDashPlugin
 import org.kde.plasma.plasmoid 2.0
-import org.kde.milou 0.3 as Milou
 import org.kde.plasma.private.kicker 0.1 as Kicker
 
 import "tools.js" as Tools
@@ -43,45 +42,6 @@ Kicker.DashboardWindow {
     mainItem: Item {
         id: root
         anchors.fill: parent
-
-        Milou.ResultsModel {
-            id: krunnerResultsModel
-            queryString: queryField.text
-            limit: 10
-        }
-
-        TextInput {
-            id: queryField
-            visible: false
-            x: 250
-            z: 1000
-            width: 200
-            height: 50
-            text: "firefox"
-        }
-
-        ColumnLayout {
-            visible: queryField.visible
-            Repeater {
-                model: krunnerResultsModel
-
-                RowLayout {
-                    Kirigami.Icon {
-                        id: typePixmap
-                        width: 50
-                        height: 50
-
-                        source: model.decoration
-                    }
-
-                    Label {
-                        text: model.display
-                        color: "#000000"
-                    }
-                }
-            }
-        }
-
 
         /**
         * Model for storing list of installed applications.
@@ -102,33 +62,53 @@ Kicker.DashboardWindow {
             // { name, icon, url }
         }
 
-        RowLayout {
+        Item {
             anchors.fill: parent
-            spacing: 100
-            anchors.topMargin: 20
-            anchors.bottomMargin: 20
+            anchors.margins: 20
 
-            ColumnLayout {
-                width: 500
+            Item {
+                id: leftPane
+                width: 350
+                anchors {
+                    top: parent.top
+                    bottom: parent.bottom
+                    left: parent.left
+                    leftMargin: 30
+                    topMargin: 160
+                }
 
-                Layout.fillHeight: true
-                spacing: 50
+//                Layout.fillHeight: true
+//                Layout.leftMargin: 30
+//                Layout.topMargin: 168
 
                 CategoriesSidebarContainer {
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.top: parent.top
+                    anchors.bottom: systemFavoritesContainer.top
                 }
 
                 SystemFavoritesContainer {
-                    Layout.fillWidth: true
-                    Layout.bottomMargin: 20
-                    Layout.leftMargin: 20
+                    id: systemFavoritesContainer
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.bottom: parent.bottom
+                    anchors.bottomMargin: 20
                 }
             }
 
-            AppGridContainer {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
+            Item {
+                id: rightPane
+                anchors {
+                    left: leftPane.right
+                    top: parent.top
+                    bottom: parent.bottom
+                    right: parent.right
+                }
+
+                AppGridContainer {
+                    anchors.fill: parent
+                }
             }
         }
 
