@@ -1,21 +1,25 @@
 set(PLUGIN_SRCS
 
-    superxdashplugin.cpp
     appslist.cpp
+    superxdashplugin.cpp
     systemfavourites.cpp
     utils.cpp
 
     ### DEBUG
-    ../package/contents/ui/tools.js
-    ../package/contents/ui/main.qml
-    ../package/contents/ui/CompactRepresentation.qml
-    ../package/contents/ui/IconItem.qml
-    ../package/contents/ui/Dash.qml
-    ../package/contents/ui/PaginatedGrid.qml
-    ../package/contents/ui/Heading.qml
     ../package/contents/ui/AppGridContainer.qml
-    ../package/contents/ui/SystemFavoritesContainer.qml
     ../package/contents/ui/CategoriesSidebarContainer.qml
+    ../package/contents/ui/CompactRepresentation.qml
+    ../package/contents/ui/Dash.qml
+    ../package/contents/ui/FavoritesContainer.qml
+    ../package/contents/ui/Heading.qml
+    ../package/contents/ui/IconItem.qml
+    ../package/contents/ui/PaginatedGrid.qml
+    ../package/contents/ui/SystemFavoritesContainer.qml
+    ../package/contents/ui/main.qml
+    ../package/contents/ui/TopContainer.qml
+
+    ../package/contents/ui/tools.js
+
     ###
 )
 

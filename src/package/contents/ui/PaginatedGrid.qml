@@ -74,7 +74,7 @@ Item {
                     
                     Layout.fillHeight: true
                     Layout.fillWidth: true 
-                    Layout.margins: 20
+                    Layout.margins: 40
                     icon: root.model.get(startIndex+index) ? root.model.get(startIndex+index)[iconModelKey] : ""
                     label: root.model.get(startIndex+index) ? root.model.get(startIndex+index)[labelModelKey] : ""
                     onOpenContextMenu: root.openContextMenu(startIndex+index)

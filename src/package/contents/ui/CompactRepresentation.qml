@@ -85,7 +85,7 @@ Item {
         hoverEnabled: !root.dashWindow || !root.dashWindow.visible
 
         onClicked: {
-            root.dashWindow.toggle();
+            root.dashWindow.toggleDash();
             justOpenedTimer.start();
         }
     }

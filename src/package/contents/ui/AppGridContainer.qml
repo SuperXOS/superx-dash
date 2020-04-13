@@ -28,70 +28,15 @@ import com.superxos.dash 1.0 as SuperXDashPlugin
 import "tools.js" as Tools
 
 Item {
+    property TextArea queryField: null
+    property alias appsGrid: appsGrid
+    property PaginatedGrid favoritesGrid: null
+    property alias headingText: heading.text
+
     Milou.ResultsModel {
         id: krunnerResultsModel
         queryString: queryField.text
         limit: 20
-    }
-
-//    ColumnLayout {
-//        visible: queryField.visible
-//        Repeater {
-//            model: krunnerResultsModel
-
-//            RowLayout {
-//                Kirigami.Icon {
-//                    id: typePixmap
-//                    width: 50
-//                    height: 50
-
-//                    source: model.decoration
-//                }
-
-//                Label {
-//                    text: model.display
-//                    color: "#000000"
-//                }
-//            }
-//        }
-//    }
-    Menu {
-        id: _favoritesCtxMenu
-        property int index
-
-        MenuItem {
-            text: "Open"
-            onClicked: {
-                SuperXDashPlugin.AppsList.openApp(favoritesModel.get(_favoritesCtxMenu.index).url);
-                toggle();
-            }
-        }
-        MenuItem {
-            text: "Remove from Favourites"
-            onClicked: {
-                var favoritesJsonArray = JSON.parse(plasmoid.configuration.favorites);
-
-                for (var index in favoritesJsonArray) {
-                    if (favoritesJsonArray[index].url === favoritesModel.get(_favoritesCtxMenu.index).url) {
-                        appsModel.insert(0, {
-                                                name: favoritesJsonArray[index].name,
-                                                icon: favoritesJsonArray[index].icon,
-                                                url: favoritesJsonArray[index].url
-                                            });
-                        favoritesModel.remove(_favoritesCtxMenu.index);
-                        Tools.listModelSort(appsModel, (a, b) => a.name.localeCompare(b.name));
-                        Tools.listModelSort(favoritesModel, (a, b) => a.name.localeCompare(b.name));
-                        favoritesJsonArray.splice(index, 1);
-                        break;
-                    }
-                }
-
-                plasmoid.configuration.favorites = JSON.stringify(favoritesJsonArray);
-
-                appsGrid.reset();
-                favoritesGrid.reset();
-            }
-        }
     }
 
     Menu {
@@ -133,47 +78,8 @@ Item {
         anchors.fill: parent
         spacing: 50
 
-        Item {
-            height: 70
-            Layout.fillWidth: true
-            Layout.topMargin: 50
-
-            TextArea {
-                id: queryField
-                width: 200
-                anchors.centerIn: parent
-            }
-        }
-
         Heading {
-            Layout.fillWidth: true
-            text: "Favorites"
-        }
-
-        /**
-          * Gridview for listing favourite applications
-          */
-        PaginatedGrid {
-            id: favoritesGrid
-            Layout.fillWidth: true
-            height: 140
-
-            cellWidth: 140
-            cellHeight: 140
-            model: favoritesModel
-            iconModelKey: "icon"
-            labelModelKey: "name"
-            onOpenContextMenu: {
-                _favoritesCtxMenu.index = index;
-                _favoritesCtxMenu.popup();
-            }
-            onClicked: {
-                SuperXDashPlugin.AppsList.openApp(model.url);
-                toggle();
-            }
-        }
-
-        Heading {
+            id: heading
             Layout.fillWidth: true
             text: "Applications"
         }
@@ -187,8 +93,8 @@ Item {
             Layout.fillHeight: true
             visible: !krunnerResultsGrid.visible
 
-            cellWidth: 140
-            cellHeight: 140
+            cellWidth: 180
+            cellHeight: 180
             model: appsModel
             iconModelKey: "icon"
             labelModelKey: "name"
@@ -211,14 +117,14 @@ Item {
             Layout.fillWidth: true
             Layout.fillHeight: true
             visible: queryField.text.length > 0
-            cellWidth: 140
-            cellHeight: 140
+            cellWidth: 180
+            cellHeight: 180
 
             model: krunnerResultsModel
             delegate: IconItem {
                 id: gridItem
-                width: 100
-                height: 100
+                width: 120
+                height: 120
                 icon: model.decoration
                 label: model.display
             }

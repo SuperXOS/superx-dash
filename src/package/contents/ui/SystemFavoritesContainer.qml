@@ -1,45 +1,107 @@
 import QtQuick 2.14
 import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.12
+import QtGraphicalEffects 1.14
 
+import org.kde.kirigami 2.7 as Kirigami
 import com.superxos.dash 1.0 as SuperXDashPlugin
 
-RowLayout {
+Rectangle {
+    property int spacing: 30
+
+    id: root
     z: 1000
 
-    IconItem {
-        width: parent.width/3
-        height: 100
-        icon: "system-shutdown"
-        label: "Shutdown"
-        color: "#ffffffff"
-        onClicked: {
-            SuperXDashPlugin.SystemFavourites.onShutdownClicked();
-            toggle();
+    Item {
+        id: shutdownButton
+        width: parent.height
+        height: parent.height
+        anchors {
+            left: root.left
+            top: root.top
+            leftMargin: root.spacing
+            rightMargin: root.spacing
+        }
+
+        Kirigami.Icon {
+            anchors.fill: parent
+            source: "system-shutdown"
+
+            ColorOverlay {
+                anchors.fill: parent
+                source: parent
+                color: "#ffffffff"
+            }
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            onClicked: {
+                SuperXDashPlugin.SystemFavourites.onShutdownClicked();
+                toggleDash();
+            }
         }
     }
 
-    IconItem {
-        width: parent.width/3
-        height: 100
-        icon: "system-log-out"
-        label: "Logout"
-        color: "#ffffffff"
-        onClicked: {
-            SuperXDashPlugin.SystemFavourites.onLogoutClicked();
-            toggle();
+    Item {
+        id: logoutButton
+        width: parent.height
+        height: parent.height
+        anchors {
+            left: shutdownButton.right
+            top: root.top
+            leftMargin: root.spacing
+            rightMargin: root.spacing
+        }
+
+        Kirigami.Icon {
+            anchors.fill: parent
+            source: "system-log-out"
+
+            ColorOverlay {
+                anchors.fill: parent
+                source: parent
+                color: "#ffffffff"
+            }
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            onClicked: {
+                SuperXDashPlugin.SystemFavourites.onLogoutClicked();
+                toggleDash();
+            }
         }
     }
 
-    IconItem {
-        width: parent.width/3
-        height: 100
-        icon: "system-reboot"
-        label: "Reboot"
-        color: "#ffffffff"
-        onClicked: {
-            SuperXDashPlugin.SystemFavourites.onRebootClicked();
-            toggle();
+    Item {
+        id: rebootButton
+        width: parent.height
+        height: parent.height
+        anchors {
+            left: logoutButton.right
+            top: root.top
+            leftMargin: root.spacing
+            rightMargin: root.spacing
+        }
+
+        Kirigami.Icon {
+            anchors.fill: parent
+            source: "system-reboot"
+
+            ColorOverlay {
+                anchors.fill: parent
+                source: parent
+                color: "#ffffffff"
+            }
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            onClicked: {
+                SuperXDashPlugin.SystemFavourites.onRebootClicked();
+                toggleDash();
+            }
         }
     }
 }
