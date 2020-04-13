@@ -34,8 +34,8 @@
 
 AppsList::AppsList(QObject *parent) : QObject(parent) {}
 
-void AppsList::appsList() {
-  KIO::ListJob *listJob = KIO::listRecursive(QUrl("applications:///"));
+void AppsList::appsList(QString url) {
+  KIO::ListJob *listJob = KIO::listRecursive(QUrl(url), KIO::HideProgressInfo);
 
   connect(listJob, &KIO::ListJob::entries,
           [this](KIO::Job *job, const KIO::UDSEntryList &list) {

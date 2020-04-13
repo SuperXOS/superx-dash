@@ -22,6 +22,7 @@
 import QtQuick 2.14
 import QtQuick.Layouts 1.14
 import QtQuick.Controls 2.14
+import QtGraphicalEffects 1.14
 
 import org.kde.kirigami 2.7 as Kirigami
 import com.superxos.dash 1.0 as SuperXDashPlugin
@@ -35,6 +36,7 @@ import "tools.js" as Tools
   */
 Kicker.DashboardWindow {
     property bool isOpen: false;
+    property bool showFavorites: false;
 
     backgroundColor: Qt.rgba(0,0,0,0.5)
     onKeyEscapePressed: {
@@ -64,38 +66,139 @@ Kicker.DashboardWindow {
             // { name, icon, url }
         }
 
+        ListModel {
+            id: categoriesModel
+
+            ListElement {
+              icon: "applications-all"
+              name: "Applications"
+              url: "applications:///"
+            }
+            ListElement {
+                icon: "applications-development"
+                name: "Development"
+                url: "applications:///Development"
+            }
+            ListElement {
+              icon: "applications-education"
+              name: "Education"
+              url: "applications:///Education"
+            }
+            ListElement {
+              icon: "applications-games"
+              name: "Games"
+              url: "applications:///Games"
+            }
+            ListElement {
+              icon: "applications-graphics"
+              name: "Graphics"
+              url: "applications:///Graphics"
+            }
+            ListElement {
+              icon: "applications-internet"
+              name: "Internet"
+              url: "applications:///Internet"
+            }
+            ListElement {
+              icon: "applications-multimedia"
+              name: "Multimedia"
+              url: "applications:///Multimedia"
+            }
+            ListElement {
+              icon: "applications-office"
+              name: "Office"
+              url: "applications:///Office"
+            }
+            ListElement {
+              icon: "applications-system"
+              name: "System"
+              url: "applications:///System"
+            }
+            ListElement {
+              icon: "applications-utilities"
+              name: "Utilities"
+              url: "applications:///Utilities"
+            }
+            ListElement {
+              icon: "applications-other"
+              name: "Others"
+              url: "applications:///Applications"
+            }
+        }
+
+        SystemFavoritesContainer {
+            height: 40
+            anchors {
+                top: parent.top
+                left: parent.left
+                margins: 10
+            }
+        }
+
+        Kirigami.Icon {
+            width: 40
+            height: 40
+            source: "window-close"
+            anchors {
+                top: parent.top
+                right: parent.right
+                margins: 10
+            }
+
+            ColorOverlay {
+                anchors.fill: parent
+                source: parent
+                color: "#ffeeeeee"
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                onClicked: {
+                    toggleDash();
+                }
+            }
+        }
+
         Item {
+            property int spacing: 100
+            property int topPaneMargin: 70
+
+            id: container
             anchors.fill: parent
-            anchors.margins: 20
+
+            Item {
+                id: topPane
+                anchors {
+                    left: parent.left
+                    right: parent.right
+                    top: parent.top
+                    topMargin: container.topPaneMargin
+                }
+                height: 100
+
+                TopContainer {
+                    id: topContainer
+                    anchors.fill: parent
+                }
+            }
 
             Item {
                 id: leftPane
-                width: 350
+                width: 400
                 anchors {
-                    top: parent.top
-                    bottom: parent.bottom
+                    top: topPane.bottom
+                    bottom: bottomPane.top
                     left: parent.left
-                    leftMargin: 30
-                    topMargin: 160
+                    leftMargin: container.spacing
+                    rightMargin: container.spacing
+                    bottomMargin: container.spacing
+                    topMargin: container.topPaneMargin
                 }
 
-//                Layout.fillHeight: true
-//                Layout.leftMargin: 30
-//                Layout.topMargin: 168
-
-                CategoriesSidebarContainer {
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.top: parent.top
-                    anchors.bottom: systemFavoritesContainer.top
-                }
-
-                SystemFavoritesContainer {
-                    id: systemFavoritesContainer
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.bottom: parent.bottom
-                    anchors.bottomMargin: 20
+                FavoritesContainer {
+                    id: favoritesGridContainer
+                    anchors.fill: parent
+                    appsGrid: appsGridContainer.appsGrid
                 }
             }
 
@@ -103,13 +206,63 @@ Kicker.DashboardWindow {
                 id: rightPane
                 anchors {
                     left: leftPane.right
-                    top: parent.top
-                    bottom: parent.bottom
+                    top: topPane.bottom
+                    bottom: bottomPane.top
                     right: parent.right
+                    leftMargin: container.spacing
+                    rightMargin: container.spacing
+                    bottomMargin: container.spacing
+                    topMargin: container.topPaneMargin
                 }
 
                 AppGridContainer {
+                    id: appsGridContainer
                     anchors.fill: parent
+                    queryField: topContainer.queryField
+                    favoritesGrid: favoritesGridContainer.favoritesGrid
+                }
+            }
+
+            Item {
+                id: bottomPane
+                anchors {
+                    left: parent.left
+                    right: parent.right
+                    bottom: parent.bottom
+                }
+                height: 120
+
+                RowLayout {
+                    height: parent.height
+                    anchors.centerIn: parent
+
+                    Repeater {
+                        model: categoriesModel
+
+                        Kirigami.Icon {
+                            width: 80
+                            height: 40
+                            source: model.icon
+                            anchors.margins: 20
+
+                            MouseArea {
+                                anchors.fill: parent
+                                onClicked: {
+                                    appsModel.clear();
+
+                                    if (model.url === "applications:///") {
+                                        showFavorites = false;
+                                    } else {
+                                        showFavorites = true;
+                                    }
+
+                                    appsGridContainer.headingText = model.name
+                                    SuperXDashPlugin.AppsList.appsList(model.url);
+                                }
+                            }
+                        }
+                    }
+
                 }
             }
         }
@@ -129,13 +282,17 @@ Kicker.DashboardWindow {
                         return
                     }
 
-                    var favoritesJsonArray = plasmoid.configuration.favorites && JSON.parse(plasmoid.configuration.favorites) || [];
+                    if (!showFavorites) {
+                        var favoritesJsonArray = plasmoid.configuration.favorites && JSON.parse(plasmoid.configuration.favorites) || [];
 
-                    for (var index in favoritesJsonArray) {
-                        if (favoritesJsonArray[index].url === e.url) {
-                            return;
+                        for (var index in favoritesJsonArray) {
+                            if (favoritesJsonArray[index].url === e.url) {
+                                return;
+                            }
                         }
                     }
+
+                    console.log(">>>", e.name.split("/").pop())
 
                     appsModel.append({
                                         "name": e.name.split("/").pop(),
@@ -144,6 +301,9 @@ Kicker.DashboardWindow {
                                     })
                 })
 
+                if (appsGridContainer && appsGridContainer.appsGrid) {
+                    appsGridContainer.appsGrid.reset();
+                }
                 Tools.listModelSort(appsModel, (a, b) => a.name.localeCompare(b.name));
             }
         }
@@ -163,13 +323,13 @@ Kicker.DashboardWindow {
             }
 
             Tools.listModelSort(favoritesModel, (a, b) => a.name.localeCompare(b.name));
-            SuperXDashPlugin.AppsList.appsList()
+            SuperXDashPlugin.AppsList.appsList("applications:///")
         }
     }
 
     function toggleDash() {
         isOpen = !isOpen;
-        SuperXDashPlugin.Utils.showDesktop(isOpen);
+//        SuperXDashPlugin.Utils.showDesktop(isOpen);
         toggle();
     }
 }

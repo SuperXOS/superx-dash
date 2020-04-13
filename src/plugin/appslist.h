@@ -34,7 +34,7 @@ class AppsList : public QObject {
   AppsList(QObject *parent = nullptr);
 
  public slots:
-  void appsList();
+  void appsList(QString url = "applications:///");
   void openApp(QString path);
 
  signals:
