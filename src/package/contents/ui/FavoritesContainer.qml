@@ -17,7 +17,7 @@ Item {
             text: "Open"
             onClicked: {
                 SuperXDashPlugin.AppsList.openApp(favoritesModel.get(_favoritesCtxMenu.index).url);
-                toggle();
+                toggleDash();
             }
         }
         MenuItem {
@@ -75,7 +75,7 @@ Item {
             }
             onClicked: {
                 SuperXDashPlugin.AppsList.openApp(model.url);
-                toggle();
+                toggleDash();
             }
         }
     }

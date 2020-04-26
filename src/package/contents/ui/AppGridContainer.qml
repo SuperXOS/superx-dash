@@ -31,12 +31,12 @@ Item {
     property TextArea queryField: null
     property alias appsGrid: appsGrid
     property PaginatedGrid favoritesGrid: null
-    property alias headingText: heading.text
+    property string headingText: "Applications"
 
     Milou.ResultsModel {
         id: krunnerResultsModel
         queryString: queryField.text
-        limit: 20
+        limit: 15
     }
 
     Menu {
@@ -47,7 +47,7 @@ Item {
             text: "Open"
             onClicked: {
                 SuperXDashPlugin.AppsList.openApp(appsModel.get(_appsCtxMenu.index).url);
-                toggle();
+                toggleDash();
             }
         }
         MenuItem {
@@ -81,7 +81,7 @@ Item {
         Heading {
             id: heading
             Layout.fillWidth: true
-            text: "Applications"
+            text: queryField.text.length > 0 ? "Results" : headingText
         }
 
         /**
@@ -104,8 +104,8 @@ Item {
                 _appsCtxMenu.popup();
             }
             onClicked: {
-                SuperXDashPlugin.AppsList.openApp(model);
-                toggle();
+                SuperXDashPlugin.AppsList.openApp(model.url);
+                toggleDash();
             }
         }
 
@@ -119,14 +119,26 @@ Item {
             visible: queryField.text.length > 0
             cellWidth: 180
             cellHeight: 180
+            interactive: false
 
             model: krunnerResultsModel
-            delegate: IconItem {
+            delegate: Item {
                 id: gridItem
-                width: 120
-                height: 120
-                icon: model.decoration
-                label: model.display
+                width: 180
+                height: 180
+
+                IconItem {
+                    width: parent.width - 35
+                    height: parent.height - 35
+                    anchors.centerIn: parent
+                    icon: model.decoration
+                    label: model.display
+                    onClicked: {
+                        krunnerResultsModel.run(krunnerResultsModel.index(index, 0));
+                        toggleDash();
+                        queryField.text = ""
+                    }
+                }
             }
         }
 

@@ -22,6 +22,9 @@
 import QtQuick 2.14
 import QtQuick.Layouts 1.14
 import QtQuick.Controls 2.14
+import QtGraphicalEffects 1.14
+
+import org.kde.kirigami 2.7 as Kirigami
 
 Item {
     property alias queryField: queryField
@@ -40,5 +43,29 @@ Item {
         width: 500
         anchors.centerIn: parent
         placeholderText: "Search"
+    }
+
+    Kirigami.Icon {
+        width: 20
+        height: 20
+        source: "window-close"
+        anchors {
+            right: queryField.right
+            verticalCenter: queryField.verticalCenter
+            rightMargin: 5
+        }
+
+        ColorOverlay {
+            anchors.fill: parent
+            source: parent
+            color: "#ff888888"
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            onClicked: {
+                queryField.text = "";
+            }
+        }
     }
 }

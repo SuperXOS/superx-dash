@@ -55,6 +55,9 @@ Item {
         orientation: ListView.Horizontal
         snapMode: ListView.SnapOneItem
         model: pages
+
+        highlightMoveDuration: 1000
+        highlightMoveVelocity: -1
             
         delegate: GridLayout {
             id: grid
@@ -74,7 +77,7 @@ Item {
                     
                     Layout.fillHeight: true
                     Layout.fillWidth: true 
-                    Layout.margins: 40
+                    Layout.margins: 20
                     icon: root.model.get(startIndex+index) ? root.model.get(startIndex+index)[iconModelKey] : ""
                     label: root.model.get(startIndex+index) ? root.model.get(startIndex+index)[labelModelKey] : ""
                     onOpenContextMenu: root.openContextMenu(startIndex+index)
@@ -82,6 +85,32 @@ Item {
                 }
             }
         }
+    }
+
+    Timer {
+        id: scrollTimer
+        interval: 1100
+        repeat: false
+    }
+
+    MouseArea {
+        id: scrollArea
+        anchors.fill: parent
+        acceptedButtons: Qt.NoButton
+        onWheel: {
+            if (!scrollTimer.running) {
+                var isMouseWheelUp = wheel.angleDelta.y > 0;
+
+                if (isMouseWheelUp) {
+                    pageHolder.currentIndex = (pageHolder.currentIndex+1 == pages) ? pageHolder.currentIndex : pageHolder.currentIndex+1;
+                } else if (!isMouseWheelUp) {
+                    pageHolder.currentIndex = (pageHolder.currentIndex == 0) ? 0 : pageHolder.currentIndex-1;
+                }
+
+                scrollTimer.start();
+            }
+        }
+        z: 1000
     }
 
     function reset() {

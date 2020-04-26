@@ -1,0 +1,16 @@
+[X] Click blank space to exit dash
+[X] Clear search results when searched app is opened
+[X] Clear search on dash open
+[X] Clear button to clear search result
+[X] Clicking on category buttons should clear search results and show that category
+[X] Decrease spacing across all items to make up space for more apps
+[X] Implement scroll to change page
+[ ] Show loader while loading apps
+[ ] Merge favorites section should get prepended to all applications
+[ ] Fix "All applications" loading the applications one by one (1)
+[ ] Multiple listing of same application
+
+
+
+
+(1) Check plasma data sources

@@ -38,9 +38,9 @@ Kicker.DashboardWindow {
     property bool isOpen: false;
     property bool showFavorites: false;
 
-    backgroundColor: Qt.rgba(0,0,0,0.5)
+    backgroundColor: Qt.rgba(0,0,0,0.7)
     onKeyEscapePressed: {
-        toggle();
+        toggleDash();
     }
 
     mainItem: Item {
@@ -127,11 +127,12 @@ Kicker.DashboardWindow {
         }
 
         SystemFavoritesContainer {
+            visible: false
             height: 40
             anchors {
                 top: parent.top
                 left: parent.left
-                margins: 10
+                topMargin: 30
             }
         }
 
@@ -142,7 +143,7 @@ Kicker.DashboardWindow {
             anchors {
                 top: parent.top
                 right: parent.right
-                margins: 10
+                margins: 30
             }
 
             ColorOverlay {
@@ -160,8 +161,8 @@ Kicker.DashboardWindow {
         }
 
         Item {
-            property int spacing: 100
-            property int topPaneMargin: 70
+            property int spacing: 20
+            property int topPaneMargin: 0
 
             id: container
             anchors.fill: parent
@@ -184,7 +185,8 @@ Kicker.DashboardWindow {
 
             Item {
                 id: leftPane
-                width: 400
+                visible: false
+                width: 0
                 anchors {
                     top: topPane.bottom
                     bottom: bottomPane.top
@@ -245,8 +247,13 @@ Kicker.DashboardWindow {
                             source: model.icon
                             anchors.margins: 20
 
+                            ToolTip.visible: mousearea.containsMouse
+                            ToolTip.text: model.name
+
                             MouseArea {
+                                id: mousearea
                                 anchors.fill: parent
+                                hoverEnabled: true
                                 onClicked: {
                                     appsModel.clear();
 
@@ -256,8 +263,10 @@ Kicker.DashboardWindow {
                                         showFavorites = true;
                                     }
 
-                                    appsGridContainer.headingText = model.name
+                                    appsGridContainer.headingText = model.name;
                                     SuperXDashPlugin.AppsList.appsList(model.url);
+
+                                    topContainer.queryField.text = "";
                                 }
                             }
                         }
@@ -292,7 +301,7 @@ Kicker.DashboardWindow {
                         }
                     }
 
-                    console.log(">>>", e.name.split("/").pop())
+//                    console.log(">>>", e.name.split("/").pop())
 
                     appsModel.append({
                                         "name": e.name.split("/").pop(),
@@ -301,10 +310,8 @@ Kicker.DashboardWindow {
                                     })
                 })
 
-                if (appsGridContainer && appsGridContainer.appsGrid) {
-                    appsGridContainer.appsGrid.reset();
-                }
                 Tools.listModelSort(appsModel, (a, b) => a.name.localeCompare(b.name));
+                appsGridContainer.appsGrid.reset();
             }
         }
         
@@ -323,13 +330,21 @@ Kicker.DashboardWindow {
             }
 
             Tools.listModelSort(favoritesModel, (a, b) => a.name.localeCompare(b.name));
-            SuperXDashPlugin.AppsList.appsList("applications:///")
+            SuperXDashPlugin.AppsList.appsList()
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            onClicked: toggleDash()
+            z: -10
         }
     }
 
     function toggleDash() {
+        topContainer.queryField.text = "";
         isOpen = !isOpen;
 //        SuperXDashPlugin.Utils.showDesktop(isOpen);
+        appsGridContainer.appsGrid.reset();
         toggle();
     }
 }
