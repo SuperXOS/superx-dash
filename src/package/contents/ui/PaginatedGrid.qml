@@ -23,6 +23,8 @@ import QtQuick 2.14
 import QtQuick.Layouts 1.14
 import QtQuick.Controls 2.14
 
+import org.kde.kirigami 2.7 as Kirigami
+
 Item {
     id: root
     
@@ -66,6 +68,14 @@ Item {
             cellWidth: root.cellWidth
             cellHeight: root.cellHeight
             interactive: false
+            highlight: Rectangle {
+                width: parent.cellWidth
+                height: parent.cellHeight
+                radius: 4
+                color: Qt.rgba(Kirigami.Theme.highlightColor.r, Kirigami.Theme.highlightColor.g, Kirigami.Theme.highlightColor.b, 0.2)
+                visible: pageHolder.currentIndex == index
+            }
+            highlightFollowsCurrentItem: true
 
             property int startIndex: index*itemsPerPage
 
@@ -83,6 +93,15 @@ Item {
                     label: root.model.get(startIndex+index) ? root.model.get(startIndex+index)[labelModelKey] : ""
                     onOpenContextMenu: root.openContextMenu(startIndex+index)
                     onClicked: root.clicked(root.model.get(startIndex+index))
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    acceptedButtons: Qt.NoButton
+                    onEntered: {
+                        grid.currentIndex = index;
+                    }
                 }
             }
         }
