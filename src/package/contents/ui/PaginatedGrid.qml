@@ -89,7 +89,7 @@ Item {
 
     Timer {
         id: scrollTimer
-        interval: 1100
+        interval: 1010
         repeat: false
     }
 
@@ -99,15 +99,16 @@ Item {
         acceptedButtons: Qt.NoButton
         onWheel: {
             if (!scrollTimer.running) {
-                var isMouseWheelUp = wheel.angleDelta.y > 0;
+                var isMouseWheelUp = wheel.angleDelta.y < 0;
 
-                if (isMouseWheelUp) {
-                    pageHolder.currentIndex = (pageHolder.currentIndex+1 == pages) ? pageHolder.currentIndex : pageHolder.currentIndex+1;
-                } else if (!isMouseWheelUp) {
-                    pageHolder.currentIndex = (pageHolder.currentIndex == 0) ? 0 : pageHolder.currentIndex-1;
+                if (isMouseWheelUp && (pageHolder.currentIndex+1) < pages) {
+                    pageHolder.currentIndex++;
+                    scrollTimer.start();
+                } else if (!isMouseWheelUp && pageHolder.currentIndex > 0) {
+                    pageHolder.currentIndex--;
+                    scrollTimer.start();
                 }
 
-                scrollTimer.start();
             }
         }
         z: 1000
