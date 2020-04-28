@@ -22,6 +22,7 @@
 import QtQuick 2.14
 import QtQuick.Layouts 1.14
 import QtQuick.Controls 2.14
+import QtQuick.Controls.Styles 1.4
 import QtGraphicalEffects 1.14
 
 import org.kde.kirigami 2.7 as Kirigami
@@ -44,12 +45,21 @@ Item {
         height: 30
         anchors.centerIn: parent
         placeholderText: "Search"
+        background: Rectangle {
+            radius: 4
+            color: Kirigami.Theme.activeBackgroundColor
+        }
+        color: Kirigami.Theme.textColor
+        KeyNavigation.tab: appsGridContainer
+
         onTextChanged: {
             var t = text.trim();
 
             if (t.length === 0) {
                 text = "";
             }
+
+            appsGridContainer.focus();
         }
     }
 

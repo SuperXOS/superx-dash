@@ -75,9 +75,9 @@ Item {
     }
 
     FocusScope {
+        id: keyboardNavFocusScope
         focus: true
-        onFocusChanged: this.focus = true
-//        Keys.forwardTo: topContainer.queryField
+        Keys.forwardTo: queryField
         Keys.onPressed: {
             console.log(event.key)
             switch(event.key) {
@@ -103,8 +103,6 @@ Item {
                     break;
             }
         }
-//        Keys.onEnterPressed: console.log("Enter", event.key)
-//        Keys.onReturnPressed: console.log("Return", event.key)
     }
 
     ColumnLayout {
@@ -174,6 +172,21 @@ Item {
                 }
             }
         }
+//        PaginatedGrid {
+//            id: krunnerResultsGrid
+//            Layout.fillWidth: true
+//            Layout.fillHeight: true
+//            visible: queryField.text.length > 0
 
+//            cellWidth: 180
+//            cellHeight: 180
+//            model: krunnerResultsModel
+//            iconModelKey: "decoration"
+//            labelModelKey: "display"
+//        }
+    }
+
+    function focus() {
+        keyboardNavFocusScope.focus = true;
     }
 }
