@@ -41,8 +41,16 @@ Item {
     TextArea {
         id: queryField
         width: 500
+        height: 30
         anchors.centerIn: parent
         placeholderText: "Search"
+        onTextChanged: {
+            var t = text.trim();
+
+            if (t.length === 0) {
+                text = "";
+            }
+        }
     }
 
     Kirigami.Icon {
