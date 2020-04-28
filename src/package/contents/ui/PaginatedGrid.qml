@@ -58,26 +58,27 @@ Item {
 
         highlightMoveDuration: 1000
         highlightMoveVelocity: -1
-            
-        delegate: GridLayout {
+
+        delegate: GridView {
             id: grid
-            property int startIndex: index*itemsPerPage
-            
             width: pageHolder.width
             height: pageHolder.height
-            columns: cols
-            
-            Repeater {
-                id: gridItemRepeater
-                model: itemsPerPage
-                property int itemIndex: index
+            cellWidth: root.cellWidth
+            cellHeight: root.cellHeight
+            interactive: false
 
-                delegate: IconItem {                    
-                    id: gridItem
-                    
-                    Layout.fillHeight: true
-                    Layout.fillWidth: true 
-                    Layout.margins: 20
+            property int startIndex: index*itemsPerPage
+
+            model: itemsPerPage
+            delegate: Item {
+                id: gridItem
+                width: root.cellWidth
+                height: root.cellHeight
+
+                IconItem {
+                    width: parent.width - 35
+                    height: parent.height - 35
+                    anchors.centerIn: parent
                     icon: root.model.get(startIndex+index) ? root.model.get(startIndex+index)[iconModelKey] : ""
                     label: root.model.get(startIndex+index) ? root.model.get(startIndex+index)[labelModelKey] : ""
                     onOpenContextMenu: root.openContextMenu(startIndex+index)
