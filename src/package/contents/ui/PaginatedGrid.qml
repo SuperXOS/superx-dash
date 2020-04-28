@@ -38,7 +38,8 @@ Item {
     property int cols: Math.floor(pageHolder.width/root.cellWidth)
     property int pages: Math.ceil(model.count/(rows*cols))
     property int itemsPerPage: rows*cols
-    
+    property int highlightIndex: 0
+
     signal clicked(var model)
     signal openContextMenu(int index);
     
@@ -68,6 +69,7 @@ Item {
             cellWidth: root.cellWidth
             cellHeight: root.cellHeight
             interactive: false
+            currentIndex: highlightIndex
             highlight: Rectangle {
                 width: parent.cellWidth
                 height: parent.cellHeight
@@ -100,7 +102,7 @@ Item {
                     hoverEnabled: true
                     acceptedButtons: Qt.NoButton
                     onEntered: {
-                        grid.currentIndex = index;
+                        highlightIndex = index;
                     }
                 }
             }
@@ -132,6 +134,44 @@ Item {
             }
         }
         z: 1000
+    }
+
+    function moveHighlightUp() {
+        if(highlightIndex-cols < 0) {
+            highlightIndex = itemsPerPage - (cols-highlightIndex);
+        } else {
+            highlightIndex = highlightIndex-cols;
+        }
+    }
+    function moveHighlightDown() {
+        if(highlightIndex+cols >= itemsPerPage) {
+            highlightIndex = highlightIndex%10;
+        } else {
+            highlightIndex = highlightIndex+cols;
+        }
+    }
+    function moveHighlightLeft() {
+        if (highlightIndex%cols-1 >= 0) {
+            highlightIndex--;
+        } else {
+            if (pageHolder.currentIndex > 0) {
+                pageHolder.currentIndex--;
+            }
+            highlightIndex = highlightIndex+cols-1;
+        }
+    }
+    function moveHighlightRight() {
+        if (highlightIndex%cols+1 < cols) {
+            highlightIndex++;
+        } else {
+            if (pageHolder.currentIndex < pages-1) {
+                pageHolder.currentIndex++;
+            }
+            highlightIndex = highlightIndex-cols+1;
+        }
+    }
+    function clickHighlightedItem() {
+        root.clicked(root.model.get(pageHolder.currentIndex*itemsPerPage+highlightIndex))
     }
 
     function reset() {

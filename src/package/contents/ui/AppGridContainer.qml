@@ -74,6 +74,39 @@ Item {
         }
     }
 
+    FocusScope {
+        focus: true
+        onFocusChanged: this.focus = true
+//        Keys.forwardTo: topContainer.queryField
+        Keys.onPressed: {
+            console.log(event.key)
+            switch(event.key) {
+                case Qt.Key_Up:
+                    appsGrid.moveHighlightUp();
+                    break;
+                case Qt.Key_Down:
+                    appsGrid.moveHighlightDown();
+                    break;
+                case Qt.Key_Left:
+                    appsGrid.moveHighlightLeft();
+                    break;
+                case Qt.Key_Right:
+                    appsGrid.moveHighlightRight();
+                    break;
+
+                case Qt.Key_Enter:
+                case Qt.Key_Return:
+                    if (appsGrid.visible) {
+                        appsGrid.clickHighlightedItem();
+                    }
+
+                    break;
+            }
+        }
+//        Keys.onEnterPressed: console.log("Enter", event.key)
+//        Keys.onReturnPressed: console.log("Return", event.key)
+    }
+
     ColumnLayout {
         anchors.fill: parent
         spacing: 50
