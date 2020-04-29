@@ -43,13 +43,6 @@ Item {
     signal clicked(var model)
     signal openContextMenu(int index);
     
-    Connections {
-        target: root
-        onModelChanged: {
-            console.log("Model Changed")
-        }
-    }
-    
     ListView {
         id: pageHolder
         
@@ -107,6 +100,13 @@ Item {
                 }
             }
         }
+    }
+
+    PageIndicator {
+        currentIndex: pageHolder.currentIndex
+        count: pages
+        anchors.top: pageHolder.bottom
+        anchors.horizontalCenter: pageHolder.horizontalCenter
     }
 
     Timer {
