@@ -50,7 +50,6 @@ Item {
             color: Kirigami.Theme.activeBackgroundColor
         }
         color: Kirigami.Theme.textColor
-        KeyNavigation.tab: appsGridContainer
 
         onTextChanged: {
             var t = text.trim();
@@ -60,6 +59,18 @@ Item {
             }
 
             appsGridContainer.focus();
+        }
+        Keys.onPressed: {
+            switch(event.key) {
+                case Qt.Key_Enter:
+                case Qt.Key_Return:
+                    if (queryField.text.length == 0) {
+                        // FIXME: Fix this hack to handle Enter/Return key
+                        appsGridContainer.appsGrid.clickHighlightedItem();
+                    }
+
+                    break;
+            }
         }
     }
 

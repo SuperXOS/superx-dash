@@ -29,6 +29,7 @@ import "tools.js" as Tools
 
 Item {
     property TextArea queryField: null
+    property alias focusScope: keyboardNavFocusScope
     property alias appsGrid: appsGrid
     property PaginatedGrid favoritesGrid: null
     property string headingText: "Applications"
