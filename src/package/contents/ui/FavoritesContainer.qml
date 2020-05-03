@@ -42,8 +42,8 @@ Item {
 
                 plasmoid.configuration.favorites = JSON.stringify(favoritesJsonArray);
 
-                appsGrid.reset();
-                favoritesGrid.reset();
+//                appsGrid.reset();
+//                favoritesGrid.reset();
             }
         }
     }
@@ -66,17 +66,17 @@ Item {
             Layout.fillHeight: true
             cellWidth: 160
             cellHeight: 160
-            model: favoritesModel
-            iconModelKey: "icon"
-            labelModelKey: "name"
-            onOpenContextMenu: {
-                _favoritesCtxMenu.index = index;
-                _favoritesCtxMenu.popup();
-            }
-            onClicked: {
-                SuperXDashPlugin.AppsList.openApp(model.url);
-                toggleDash();
-            }
+//            model: favoritesModel
+//            iconModelKey: "icon"
+//            labelModelKey: "name"
+//            onOpenContextMenu: {
+//                _favoritesCtxMenu.index = index;
+//                _favoritesCtxMenu.popup();
+//            }
+//            onClicked: {
+//                SuperXDashPlugin.AppsList.openApp(model.url);
+//                toggleDash();
+//            }
         }
     }
 }

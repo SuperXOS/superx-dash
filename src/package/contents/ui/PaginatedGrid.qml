@@ -23,25 +23,34 @@ import QtQuick 2.14
 import QtQuick.Layouts 1.14
 import QtQuick.Controls 2.14
 
+import org.kde.milou 0.3 as Milou
 import org.kde.kirigami 2.7 as Kirigami
 
 Item {
     id: root
     
+    enum ModelType {
+        ListModel,
+        MilouModel
+    }
+
     property int cellWidth
     property int cellHeight
-    property ListModel model
-    property string iconModelKey
-    property string labelModelKey
+    property int totalCount
+//    property var model
+//    property int modelType: ModelType.ListModel
+//    property string iconModelKey
+//    property string labelModelKey
+    property Component delegate
     
     property int rows: Math.floor(pageHolder.height/root.cellHeight)
     property int cols: Math.floor(pageHolder.width/root.cellWidth)
-    property int pages: Math.ceil(model.count/(rows*cols))
+    property int pages: Math.ceil(totalCount/(rows*cols))
     property int itemsPerPage: rows*cols
     property int highlightIndex: 0
 
-    signal clicked(var model)
-    signal openContextMenu(int index);
+//    signal clicked(var model)
+//    signal openContextMenu(int index);
     
     ListView {
         id: pageHolder
@@ -80,14 +89,16 @@ Item {
                 width: root.cellWidth
                 height: root.cellHeight
 
-                IconItem {
+                Item {
                     width: parent.width - 35
                     height: parent.height - 35
                     anchors.centerIn: parent
-                    icon: root.model.get(startIndex+index) ? root.model.get(startIndex+index)[iconModelKey] : ""
-                    label: root.model.get(startIndex+index) ? root.model.get(startIndex+index)[labelModelKey] : ""
-                    onOpenContextMenu: root.openContextMenu(startIndex+index)
-                    onClicked: root.clicked(root.model.get(startIndex+index))
+
+                    Loader {
+                        anchors.fill: parent
+                        sourceComponent: root.delegate
+                        property int itemIndex: startIndex+index
+                    }
                 }
 
                 MouseArea {
@@ -171,18 +182,37 @@ Item {
         }
     }
     function clickHighlightedItem() {
-        root.clicked(root.model.get(pageHolder.currentIndex*itemsPerPage+highlightIndex))
+//            root.clicked(root.model.get(pageHolder.currentIndex*itemsPerPage+highlightIndex))
     }
+
+//    function getLabel(index) {
+//        if (modelType === PaginatedGrid.ModelType.MilouModel) {
+//            return model.data(model.index(0, 0))[labelModelKey];
+//        } else {
+//            return model.get(index)[labelModelKey];
+//        }
+//    }
+//    function getIcon(index) {
+//        if (modelType === PaginatedGrid.ModelType.MilouModel) {
+//            return model.data(model.index(0, 0))[iconModelKey];
+//        } else {
+//            return model.get(index)[iconModelKey];
+//        }
+//    }
 
     function reset() {
         root.rows = 0;
         root.cols = 0;
         root.pages = 0;
         root.itemsPerPage = 0;
+        root.highlightIndex = 0;
 
         root.rows = Math.floor(pageHolder.height/root.cellHeight);
         root.cols = Math.floor(pageHolder.width/root.cellWidth);
-        root.pages = Math.ceil(model.count/(rows*cols));
+        root.pages = Math.ceil(totalCount/(rows*cols));
         root.itemsPerPage = rows*cols;
+
+//        console.log("Model Type", PaginatedGrid.ModelType.ListModel, PaginatedGrid.ModelType.MilouModel, modelType)
+//        console.log(root.rows, root.cols, root.pages, root.itemsPerPage)
     }
 }

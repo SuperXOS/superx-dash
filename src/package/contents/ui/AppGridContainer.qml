@@ -31,13 +31,64 @@ Item {
     property TextArea queryField: null
     property alias focusScope: keyboardNavFocusScope
     property alias appsGrid: appsGrid
+    property alias krunnerResultsGrid: krunnerResultsGrid
+    property alias krunnerResultsModel: krunnerResultsModel
     property PaginatedGrid favoritesGrid: null
     property string headingText: "Applications"
+
+    FocusScope {
+        id: keyboardNavFocusScope
+        focus: true
+        onActiveFocusChanged: {
+            keyboardNavFocusScope.forceActiveFocus()
+        }
+
+        Keys.forwardTo: queryField
+        Keys.onPressed: {
+            console.log(event.key)
+            switch(event.key) {
+                case Qt.Key_Up:
+                    appsGrid.moveHighlightUp();
+                    krunnerResultsGrid.moveHighlightUp();
+                    break;
+                case Qt.Key_Down:
+                    appsGrid.moveHighlightDown();
+                    krunnerResultsGrid.moveHighlightDown();
+                    break;
+                case Qt.Key_Left:
+                    console.log("left")
+                    appsGrid.moveHighlightLeft();
+                    krunnerResultsGrid.moveHighlightLeft();
+                    break;
+                case Qt.Key_Right:
+                    console.log("right")
+                    appsGrid.moveHighlightRight();
+                    krunnerResultsGrid.moveHighlightRight();
+                    break;
+
+                case Qt.Key_Enter:
+                case Qt.Key_Return:
+                    if (appsGrid.visible) {
+                        appsGrid.clickHighlightedItem();
+                    } else if (krunnerResultsGrid.visible) {
+                        krunnerResultsGrid.clickHighlightedItem();
+                    }
+
+                    break;
+            }
+        }
+    }
 
     Milou.ResultsModel {
         id: krunnerResultsModel
         queryString: queryField.text
         limit: 15
+//        onDataChanged: {
+//        }
+        onRowsInserted: {
+            krunnerResultsGrid.totalCount = krunnerResultsModel.rowCount()
+            krunnerResultsGrid.reset()
+        }
     }
 
     Menu {
@@ -69,39 +120,8 @@ Item {
                 appsModel.remove(_appsCtxMenu.index)
                 plasmoid.configuration.favorites = JSON.stringify(favoritesJsonArray);
 
-                appsGrid.reset();
-                favoritesGrid.reset();
-            }
-        }
-    }
-
-    FocusScope {
-        id: keyboardNavFocusScope
-        focus: true
-        Keys.forwardTo: queryField
-        Keys.onPressed: {
-            console.log(event.key)
-            switch(event.key) {
-                case Qt.Key_Up:
-                    appsGrid.moveHighlightUp();
-                    break;
-                case Qt.Key_Down:
-                    appsGrid.moveHighlightDown();
-                    break;
-                case Qt.Key_Left:
-                    appsGrid.moveHighlightLeft();
-                    break;
-                case Qt.Key_Right:
-                    appsGrid.moveHighlightRight();
-                    break;
-
-                case Qt.Key_Enter:
-                case Qt.Key_Return:
-                    if (appsGrid.visible) {
-                        appsGrid.clickHighlightedItem();
-                    }
-
-                    break;
+//                appsGrid.reset();
+//                favoritesGrid.reset();
             }
         }
     }
@@ -127,64 +147,84 @@ Item {
 
             cellWidth: 180
             cellHeight: 180
-            model: appsModel
-            iconModelKey: "icon"
-            labelModelKey: "name"
+            totalCount: appsModel.count
 
-            onOpenContextMenu: {
-                _appsCtxMenu.index = index;
-                _appsCtxMenu.popup();
+            delegate: IconItem {
+                anchors.fill: parent
+                icon: appsModel.get(itemIndex).icon
+                label: appsModel.get(itemIndex).name
+//                onOpenContextMenu: console.log("ctx menu", itemIndex) //root.openContextMenu(startIndex+index)
+//                onClicked: console.log("click", itemIndex) //root.clicked(root.model.get(startIndex+index))
             }
-            onClicked: {
-                SuperXDashPlugin.AppsList.openApp(model.url);
-                toggleDash();
-            }
+
+//            onOpenContextMenu: {
+//                _appsCtxMenu.index = index;
+//                _appsCtxMenu.popup();
+//            }
+//            onClicked: {
+//                SuperXDashPlugin.AppsList.openApp(model.url);
+//                toggleDash();
+//            }
         }
 
         /**
           * Gridview for listing krunner results
           */
-        GridView {
-            id: krunnerResultsGrid
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            visible: queryField.text.length > 0
-            cellWidth: 180
-            cellHeight: 180
-            interactive: false
-
-            model: krunnerResultsModel
-            delegate: Item {
-                id: gridItem
-                width: 180
-                height: 180
-
-                IconItem {
-                    width: parent.width - 35
-                    height: parent.height - 35
-                    anchors.centerIn: parent
-                    icon: model.decoration
-                    label: model.display
-                    onClicked: {
-                        krunnerResultsModel.run(krunnerResultsModel.index(index, 0));
-                        toggleDash();
-                        queryField.text = ""
-                    }
-                }
-            }
-        }
-//        PaginatedGrid {
+//        GridView {
 //            id: krunnerResultsGrid
 //            Layout.fillWidth: true
 //            Layout.fillHeight: true
 //            visible: queryField.text.length > 0
-
 //            cellWidth: 180
 //            cellHeight: 180
+//            interactive: false
+
 //            model: krunnerResultsModel
+//            delegate: Item {
+//                id: gridItem
+//                width: 180
+//                height: 180
+
+//                IconItem {
+//                    width: parent.width - 35
+//                    height: parent.height - 35
+//                    anchors.centerIn: parent
+//                    icon: model.decoration
+//                    label: model.display
+//                    onClicked: {
+//                        krunnerResultsModel.run(krunnerResultsModel.index(index, 0));
+//                        toggleDash();
+//                        queryField.text = ""
+//                    }
+//                }
+//            }
+//        }
+        PaginatedGrid {
+            id: krunnerResultsGrid
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            visible: queryField.text.length > 0
+
+            cellWidth: 180
+            cellHeight: 180
+            totalCount: krunnerResultsModel.rowCount()
+//            model: krunnerResultsModel
+//            modelType: PaginatedGrid.ModelType.MilouModel
 //            iconModelKey: "decoration"
 //            labelModelKey: "display"
-//        }
+
+            delegate: IconItem {
+                anchors.fill: parent
+                icon: krunnerResultsModel.data(krunnerResultsModel.index(itemIndex, 0), 1)
+                label: krunnerResultsModel.data(krunnerResultsModel.index(itemIndex, 0), 0)
+            }
+
+//            onClicked: {
+//                krunnerResultsModel.run(krunnerResultsModel.index(index, 0));
+//                toggleDash();
+//                queryField.text = "";
+//            }
+        }
     }
 
     function focus() {
