@@ -64,9 +64,11 @@ Item {
             switch(event.key) {
                 case Qt.Key_Enter:
                 case Qt.Key_Return:
+                    // FIXME: Fix this hack to handle Enter/Return key
                     if (queryField.text.length == 0) {
-                        // FIXME: Fix this hack to handle Enter/Return key
                         appsGridContainer.appsGrid.clickHighlightedItem();
+                    } else {
+                        appsGridContainer.krunnerResultsGrid.clickHighlightedItem();
                     }
 
                     break;

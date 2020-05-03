@@ -56,12 +56,10 @@ Item {
                     krunnerResultsGrid.moveHighlightDown();
                     break;
                 case Qt.Key_Left:
-                    console.log("left")
                     appsGrid.moveHighlightLeft();
                     krunnerResultsGrid.moveHighlightLeft();
                     break;
                 case Qt.Key_Right:
-                    console.log("right")
                     appsGrid.moveHighlightRight();
                     krunnerResultsGrid.moveHighlightRight();
                     break;
@@ -83,8 +81,6 @@ Item {
         id: krunnerResultsModel
         queryString: queryField.text
         limit: 15
-//        onDataChanged: {
-//        }
         onRowsInserted: {
             krunnerResultsGrid.totalCount = krunnerResultsModel.rowCount()
             krunnerResultsGrid.reset()
@@ -153,18 +149,20 @@ Item {
                 anchors.fill: parent
                 icon: appsModel.get(itemIndex).icon
                 label: appsModel.get(itemIndex).name
-//                onOpenContextMenu: console.log("ctx menu", itemIndex) //root.openContextMenu(startIndex+index)
-//                onClicked: console.log("click", itemIndex) //root.clicked(root.model.get(startIndex+index))
-            }
 
-//            onOpenContextMenu: {
-//                _appsCtxMenu.index = index;
-//                _appsCtxMenu.popup();
-//            }
-//            onClicked: {
-//                SuperXDashPlugin.AppsList.openApp(model.url);
-//                toggleDash();
-//            }
+                onOpenContextMenu: {
+                    _appsCtxMenu.index = itemIndex;
+                    _appsCtxMenu.popup();
+                }
+                onClicked: {
+                    SuperXDashPlugin.AppsList.openApp(appsModel.get(itemIndex).url);
+                    toggleDash();
+                }
+            }
+            onHighlightClicked: {
+                SuperXDashPlugin.AppsList.openApp(appsModel.get(index).url);
+                toggleDash();
+            }
         }
 
         /**
@@ -217,13 +215,18 @@ Item {
                 anchors.fill: parent
                 icon: krunnerResultsModel.data(krunnerResultsModel.index(itemIndex, 0), 1)
                 label: krunnerResultsModel.data(krunnerResultsModel.index(itemIndex, 0), 0)
-            }
 
-//            onClicked: {
-//                krunnerResultsModel.run(krunnerResultsModel.index(index, 0));
-//                toggleDash();
-//                queryField.text = "";
-//            }
+                onClicked: {
+                    krunnerResultsModel.run(krunnerResultsModel.index(itemIndex, 0));
+                    toggleDash();
+                    queryField.text = "";
+                }
+            }
+            onHighlightClicked: {
+                krunnerResultsModel.run(krunnerResultsModel.index(index, 0));
+                toggleDash();
+                queryField.text = "";
+            }
         }
     }
 

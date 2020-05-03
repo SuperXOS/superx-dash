@@ -51,6 +51,7 @@ Item {
 
 //    signal clicked(var model)
 //    signal openContextMenu(int index);
+    signal highlightClicked(int index);
     
     ListView {
         id: pageHolder
@@ -182,7 +183,7 @@ Item {
         }
     }
     function clickHighlightedItem() {
-//            root.clicked(root.model.get(pageHolder.currentIndex*itemsPerPage+highlightIndex))
+        root.highlightClicked(pageHolder.currentIndex*itemsPerPage+highlightIndex)
     }
 
 //    function getLabel(index) {
