@@ -84,7 +84,7 @@ Item {
 
             property int startIndex: index*itemsPerPage
 
-            model: itemsPerPage
+            model: (totalCount - startIndex) < itemsPerPage ? (totalCount - startIndex) : itemsPerPage
             delegate: Item {
                 id: gridItem
                 width: root.cellWidth
