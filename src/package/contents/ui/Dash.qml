@@ -37,7 +37,7 @@ import "tools.js" as Tools
   */
 Kicker.DashboardWindow {
     property bool isOpen: false;
-    property bool showFavorites: false;
+    property bool showPinned: true;
 
     backgroundColor: Qt.rgba(0,0,0,0.7)
     onKeyEscapePressed: {
@@ -197,12 +197,6 @@ Kicker.DashboardWindow {
                     bottomMargin: container.spacing
                     topMargin: container.topPaneMargin
                 }
-
-                FavoritesContainer {
-                    id: favoritesGridContainer
-                    anchors.fill: parent
-                    appsGrid: appsGridContainer.appsGrid
-                }
             }
 
             Item {
@@ -222,7 +216,6 @@ Kicker.DashboardWindow {
                     id: appsGridContainer
                     anchors.fill: parent
                     queryField: topContainer.queryField
-                    favoritesGrid: favoritesGridContainer.favoritesGrid
                 }
             }
 
@@ -259,9 +252,9 @@ Kicker.DashboardWindow {
                                     appsModel.clear();
 
                                     if (model.url === "/") {
-                                        showFavorites = false;
+                                        showPinned = true;
                                     } else {
-                                        showFavorites = true;
+                                        showPinned = false;
                                     }
 
                                     appsGridContainer.headingText = model.name;
@@ -277,45 +270,6 @@ Kicker.DashboardWindow {
                 }
             }
         }
-
-        Connections {
-            target: SuperXDashPlugin.AppsList
-
-
-            /**
-            * Receive and insert applications list to model for rendering.
-            */
-            onAppsListResult: {
-                apps.forEach(function (e) {
-                    if (e.mimeType === "inode/directory") {
-                        return
-                    } else if (e.name === ".") {
-                        return
-                    }
-
-                    if (!showFavorites) {
-                        var favoritesJsonArray = plasmoid.configuration.favorites && JSON.parse(plasmoid.configuration.favorites) || [];
-
-                        for (var index in favoritesJsonArray) {
-                            if (favoritesJsonArray[index].url === e.url) {
-                                return;
-                            }
-                        }
-                    }
-
-//                    console.log(">>>", e.name.split("/").pop())
-
-                    appsModel.append({
-                                        "name": e.name.split("/").pop(),
-                                        "icon": e.icon,
-                                        "url": e.url
-                                    })
-                })
-
-                Tools.listModelSort(appsModel, (a, b) => a.name.localeCompare(b.name));
-                appsGridContainer.appsGrid.reset();
-            }
-        }
         
         /**
         * Fetch the applications list when QML gets loaded
@@ -325,14 +279,11 @@ Kicker.DashboardWindow {
 
             for (var index in favoritesJsonArray) {
                 favoritesModel.append({
-                                        name: favoritesJsonArray[index].name,
-                                        icon: favoritesJsonArray[index].icon,
-                                        url: favoritesJsonArray[index].url
-                                    });
+                    name: favoritesJsonArray[index].name,
+                    icon: favoritesJsonArray[index].icon,
+                    url: favoritesJsonArray[index].url
+                });
             }
-
-            Tools.listModelSort(favoritesModel, (a, b) => a.name.localeCompare(b.name));
-//            SuperXDashPlugin.AppsList.appsList()
         }
 
         MouseArea {
@@ -360,14 +311,31 @@ Kicker.DashboardWindow {
     function populateAppsModel(source) {
         var entries = appsSource.data[source].entries;
         var apps = [];
+        var favoritesJsonArray = plasmoid.configuration.favorites && JSON.parse(plasmoid.configuration.favorites) || [];
+
+        console.log("### Favorites", JSON.stringify(favoritesJsonArray))
 
         while (entries.length > 0) {
             var entry = appsSource.data[entries.shift()];
-            console.log(entry);
 
             if (entry) {
                 if (entry.isApp) {
                     if (entry.display) {
+                        if (showPinned) {
+                            var skip = false;
+
+                            for (var index in favoritesJsonArray) {
+                                if (favoritesJsonArray[index].url === entry.entryPath) {
+                                    skip = true
+                                    break;
+                                }
+                            }
+
+                            if (skip) {
+                                continue;
+                            }
+                        }
+
                         Tools.insertSorted({
                            name: entry.name,
                            icon: entry.iconName,

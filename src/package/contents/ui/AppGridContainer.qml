@@ -33,7 +33,6 @@ Item {
     property alias appsGrid: appsGrid
     property alias krunnerResultsGrid: krunnerResultsGrid
     property alias krunnerResultsModel: krunnerResultsModel
-    property PaginatedGrid favoritesGrid: null
     property string headingText: "Applications"
 
     FocusScope {
@@ -92,14 +91,7 @@ Item {
         property int index
 
         MenuItem {
-            text: "Open"
-            onClicked: {
-                SuperXDashPlugin.AppsList.openApp(appsModel.get(_appsCtxMenu.index).url);
-                toggleDash();
-            }
-        }
-        MenuItem {
-            text: "Add to Favourites"
+            text: "Pin to top"
             onClicked: {
                 var favoritesJsonArray = plasmoid.configuration.favorites && JSON.parse(plasmoid.configuration.favorites) || [];
                 var model = appsModel.get(_appsCtxMenu.index);
@@ -110,10 +102,36 @@ Item {
                 };
 
                 favoritesJsonArray.push(modelJson);
-                favoritesModel.append(modelJson);
-                Tools.listModelSort(appsModel, (a, b) => a.name.localeCompare(b.name));
-                Tools.listModelSort(favoritesModel, (a, b) => a.name.localeCompare(b.name));
-                appsModel.remove(_appsCtxMenu.index)
+                plasmoid.configuration.favorites = JSON.stringify(favoritesJsonArray);
+
+//                appsGrid.reset();
+//                favoritesGrid.reset();
+            }
+        }
+    }
+
+    Menu {
+        id: _favoritesCtxMenu
+        property int index
+
+        MenuItem {
+            text: "Unpin"
+            onClicked: {
+                var favoritesJsonArray = JSON.parse(plasmoid.configuration.favorites);
+
+                for (var index in favoritesJsonArray) {
+                    if (favoritesJsonArray[index].url === favoritesModel.get(_favoritesCtxMenu.index).url) {
+                        appsModel.insert(0, {
+                                                name: favoritesJsonArray[index].name,
+                                                icon: favoritesJsonArray[index].icon,
+                                                url: favoritesJsonArray[index].url
+                                            });
+                        favoritesModel.remove(_favoritesCtxMenu.index);
+                        favoritesJsonArray.splice(index, 1);
+                        break;
+                    }
+                }
+
                 plasmoid.configuration.favorites = JSON.stringify(favoritesJsonArray);
 
 //                appsGrid.reset();
@@ -165,38 +183,6 @@ Item {
             }
         }
 
-        /**
-          * Gridview for listing krunner results
-          */
-//        GridView {
-//            id: krunnerResultsGrid
-//            Layout.fillWidth: true
-//            Layout.fillHeight: true
-//            visible: queryField.text.length > 0
-//            cellWidth: 180
-//            cellHeight: 180
-//            interactive: false
-
-//            model: krunnerResultsModel
-//            delegate: Item {
-//                id: gridItem
-//                width: 180
-//                height: 180
-
-//                IconItem {
-//                    width: parent.width - 35
-//                    height: parent.height - 35
-//                    anchors.centerIn: parent
-//                    icon: model.decoration
-//                    label: model.display
-//                    onClicked: {
-//                        krunnerResultsModel.run(krunnerResultsModel.index(index, 0));
-//                        toggleDash();
-//                        queryField.text = ""
-//                    }
-//                }
-//            }
-//        }
         PaginatedGrid {
             id: krunnerResultsGrid
             Layout.fillWidth: true
@@ -206,10 +192,6 @@ Item {
             cellWidth: 180
             cellHeight: 180
             totalCount: krunnerResultsModel.rowCount()
-//            model: krunnerResultsModel
-//            modelType: PaginatedGrid.ModelType.MilouModel
-//            iconModelKey: "decoration"
-//            labelModelKey: "display"
 
             delegate: IconItem {
                 anchors.fill: parent
