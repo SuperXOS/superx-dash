@@ -6,7 +6,7 @@
   <kcfgfile name=""/>
 
   <group name="General">
-    <entry name="favorites" type="String">
+    <entry name="pinned" type="String">
       <label>JSON Array of [appsModel](../ui/Dash.qml) Objects</label>
       <default>[]</default>
     </entry>

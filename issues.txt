@@ -11,12 +11,12 @@
 [X] Plasma Theme Integration with icon highlight
 [X] Plasma Theme Integration with Search field
 [X] Keyboard Navigation
-[ ] Use Plasma Data Sources to fetch appdata
+[X] Use Plasma Data Sources to fetch appdata
 [-] Show loader while loading apps
 [X] Enable Keyboard Navigation on search results page
 [X] Fix "All applications" loading the applications one by one (1)
 [X] Multiple listing of same application
 [X] Remove empty items from last page 
-[ ] Merge favorites section should get prepended to all applications
+[X] Merge favorites section should get prepended to all applications
 
 (1) Check plasma data sources

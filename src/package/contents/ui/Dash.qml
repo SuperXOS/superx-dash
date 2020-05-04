@@ -58,15 +58,6 @@ Kicker.DashboardWindow {
             // { name, icon, url }
         }
 
-        /**
-        * Model for storing favorite applications.
-        */
-        ListModel {
-            id: favoritesModel
-
-            // { name, icon, url }
-        }
-
         ListModel {
             id: categoriesModel
 
@@ -251,12 +242,6 @@ Kicker.DashboardWindow {
                                 onClicked: {
                                     appsModel.clear();
 
-                                    if (model.url === "/") {
-                                        showPinned = true;
-                                    } else {
-                                        showPinned = false;
-                                    }
-
                                     appsGridContainer.headingText = model.name;
 //                                    SuperXDashPlugin.AppsList.appsList(model.url);
                                     populateAppsModel(model.url)
@@ -275,13 +260,13 @@ Kicker.DashboardWindow {
         * Fetch the applications list when QML gets loaded
         */
         Component.onCompleted: {
-            var favoritesJsonArray = plasmoid.configuration.favorites && JSON.parse(plasmoid.configuration.favorites) || [];
+            var pinnedJsonArray = plasmoid.configuration.pinned && JSON.parse(plasmoid.configuration.pinned) || [];
 
-            for (var index in favoritesJsonArray) {
-                favoritesModel.append({
-                    name: favoritesJsonArray[index].name,
-                    icon: favoritesJsonArray[index].icon,
-                    url: favoritesJsonArray[index].url
+            for (var index in pinnedJsonArray) {
+                pinnedModel.append({
+                    name: pinnedJsonArray[index].name,
+                    icon: pinnedJsonArray[index].icon,
+                    url: pinnedJsonArray[index].url
                 });
             }
         }
@@ -304,6 +289,8 @@ Kicker.DashboardWindow {
             Component.onCompleted: {
                 connectedSources = sources;
                 populateAppsModel("/");
+
+                console.log("### DEBUG", JSON.stringify(plasmoid.configuration.pinned, null, 2))
             }
         }
     }
@@ -311,9 +298,13 @@ Kicker.DashboardWindow {
     function populateAppsModel(source) {
         var entries = appsSource.data[source].entries;
         var apps = [];
-        var favoritesJsonArray = plasmoid.configuration.favorites && JSON.parse(plasmoid.configuration.favorites) || [];
+        var pinnedJsonArray = plasmoid.configuration.pinned && JSON.parse(plasmoid.configuration.pinned) || [];
 
-        console.log("### Favorites", JSON.stringify(favoritesJsonArray))
+        if (source === "/") {
+            showPinned = true;
+        } else {
+            showPinned = false;
+        }
 
         while (entries.length > 0) {
             var entry = appsSource.data[entries.shift()];
@@ -324,8 +315,8 @@ Kicker.DashboardWindow {
                         if (showPinned) {
                             var skip = false;
 
-                            for (var index in favoritesJsonArray) {
-                                if (favoritesJsonArray[index].url === entry.entryPath) {
+                            for (var index in pinnedJsonArray) {
+                                if (pinnedJsonArray[index].url === entry.entryPath) {
                                     skip = true
                                     break;
                                 }
@@ -335,6 +326,7 @@ Kicker.DashboardWindow {
                                 continue;
                             }
                         }
+
 
                         Tools.insertSorted({
                            name: entry.name,
@@ -348,9 +340,23 @@ Kicker.DashboardWindow {
             }
         }
 
+        appsModel.clear();
+
+        if (showPinned) {
+            pinnedJsonArray.map((e) => {
+                appsModel.append({
+                    name: e.name,
+                    icon: e.icon,
+                    url: e.url,
+                    isPinned: true
+                });
+            });
+        }
+
         apps.map((e) => {
             appsModel.append(e);
         });
+
         appsGridContainer.appsGrid.reset();
     }
 

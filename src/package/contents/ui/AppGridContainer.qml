@@ -93,7 +93,7 @@ Item {
         MenuItem {
             text: "Pin to top"
             onClicked: {
-                var favoritesJsonArray = plasmoid.configuration.favorites && JSON.parse(plasmoid.configuration.favorites) || [];
+                var pinnedJsonArray = plasmoid.configuration.pinned && JSON.parse(plasmoid.configuration.pinned) || [];
                 var model = appsModel.get(_appsCtxMenu.index);
                 var modelJson = {
                     name: model.name,
@@ -101,41 +101,31 @@ Item {
                     url: model.url
                 };
 
-                favoritesJsonArray.push(modelJson);
-                plasmoid.configuration.favorites = JSON.stringify(favoritesJsonArray);
-
-//                appsGrid.reset();
-//                favoritesGrid.reset();
+                pinnedJsonArray.push(modelJson);
+                plasmoid.configuration.pinned = JSON.stringify(pinnedJsonArray);
+                populateAppsModel("/");
             }
         }
     }
 
     Menu {
-        id: _favoritesCtxMenu
+        id: _pinnedCtxMenu
         property int index
 
         MenuItem {
             text: "Unpin"
             onClicked: {
-                var favoritesJsonArray = JSON.parse(plasmoid.configuration.favorites);
+                var pinnedJsonArray = JSON.parse(plasmoid.configuration.pinned);
 
-                for (var index in favoritesJsonArray) {
-                    if (favoritesJsonArray[index].url === favoritesModel.get(_favoritesCtxMenu.index).url) {
-                        appsModel.insert(0, {
-                                                name: favoritesJsonArray[index].name,
-                                                icon: favoritesJsonArray[index].icon,
-                                                url: favoritesJsonArray[index].url
-                                            });
-                        favoritesModel.remove(_favoritesCtxMenu.index);
-                        favoritesJsonArray.splice(index, 1);
+                for (var index in pinnedJsonArray) {
+                    if (pinnedJsonArray[index].url === appsModel.get(_pinnedCtxMenu.index).url) {
+                        pinnedJsonArray.splice(index, 1);
                         break;
                     }
                 }
 
-                plasmoid.configuration.favorites = JSON.stringify(favoritesJsonArray);
-
-//                appsGrid.reset();
-//                favoritesGrid.reset();
+                plasmoid.configuration.pinned = JSON.stringify(pinnedJsonArray);
+                populateAppsModel("/");
             }
         }
     }
@@ -169,8 +159,13 @@ Item {
                 label: appsModel.get(itemIndex).name
 
                 onOpenContextMenu: {
-                    _appsCtxMenu.index = itemIndex;
-                    _appsCtxMenu.popup();
+                    if (appsModel.get(itemIndex).isPinned) {
+                        _pinnedCtxMenu.index = itemIndex;
+                        _pinnedCtxMenu.popup();
+                    } else {
+                        _appsCtxMenu.index = itemIndex;
+                        _appsCtxMenu.popup();
+                    }
                 }
                 onClicked: {
                     SuperXDashPlugin.AppsList.openApp(appsModel.get(itemIndex).url);

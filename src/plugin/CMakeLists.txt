@@ -10,7 +10,6 @@ set(PLUGIN_SRCS
     ../package/contents/ui/CategoriesSidebarContainer.qml
     ../package/contents/ui/CompactRepresentation.qml
     ../package/contents/ui/Dash.qml
-    ../package/contents/ui/FavoritesContainer.qml
     ../package/contents/ui/Heading.qml
     ../package/contents/ui/IconItem.qml
     ../package/contents/ui/PaginatedGrid.qml
