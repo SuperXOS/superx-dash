@@ -28,6 +28,7 @@ import org.kde.kirigami 2.7 as Kirigami
 import com.superxos.dash 1.0 as SuperXDashPlugin
 import org.kde.plasma.plasmoid 2.0
 import org.kde.plasma.private.kicker 0.1 as Kicker
+import org.kde.plasma.core 2.0 as PlasmaCore
 
 import "tools.js" as Tools
 
@@ -72,57 +73,57 @@ Kicker.DashboardWindow {
             ListElement {
               icon: "applications-all"
               name: "Applications"
-              url: "applications:///"
+              url: "/"
             }
             ListElement {
                 icon: "applications-development"
                 name: "Development"
-                url: "applications:///Development"
+                url: "Development/"
             }
             ListElement {
               icon: "applications-education"
               name: "Education"
-              url: "applications:///Education"
+              url: "Education/"
             }
             ListElement {
               icon: "applications-games"
               name: "Games"
-              url: "applications:///Games"
+              url: "Games/"
             }
             ListElement {
               icon: "applications-graphics"
               name: "Graphics"
-              url: "applications:///Graphics"
+              url: "Graphics/"
             }
             ListElement {
               icon: "applications-internet"
               name: "Internet"
-              url: "applications:///Internet"
+              url: "Internet/"
             }
             ListElement {
               icon: "applications-multimedia"
               name: "Multimedia"
-              url: "applications:///Multimedia"
+              url: "Multimedia/"
             }
             ListElement {
               icon: "applications-office"
               name: "Office"
-              url: "applications:///Office"
+              url: "Office/"
             }
             ListElement {
               icon: "applications-system"
               name: "System"
-              url: "applications:///System"
+              url: "System/"
             }
             ListElement {
               icon: "applications-utilities"
               name: "Utilities"
-              url: "applications:///Utilities"
+              url: "Utilities/"
             }
             ListElement {
               icon: "applications-other"
               name: "Others"
-              url: "applications:///Applications"
+              url: "Applications/"
             }
         }
 
@@ -257,14 +258,15 @@ Kicker.DashboardWindow {
                                 onClicked: {
                                     appsModel.clear();
 
-                                    if (model.url === "applications:///") {
+                                    if (model.url === "/") {
                                         showFavorites = false;
                                     } else {
                                         showFavorites = true;
                                     }
 
                                     appsGridContainer.headingText = model.name;
-                                    SuperXDashPlugin.AppsList.appsList(model.url);
+//                                    SuperXDashPlugin.AppsList.appsList(model.url);
+                                    populateAppsModel(model.url)
 
                                     topContainer.queryField.text = "";
                                 }
@@ -330,7 +332,7 @@ Kicker.DashboardWindow {
             }
 
             Tools.listModelSort(favoritesModel, (a, b) => a.name.localeCompare(b.name));
-            SuperXDashPlugin.AppsList.appsList()
+//            SuperXDashPlugin.AppsList.appsList()
         }
 
         MouseArea {
@@ -338,13 +340,57 @@ Kicker.DashboardWindow {
             onClicked: toggleDash()
             z: -10
         }
+
+        PlasmaCore.DataSource {
+            id: appsSource
+            engine: "apps"
+
+            onSourceAdded: {
+                connectSource(source);
+                console.log("onSourceAdded", source);
+            }
+
+            Component.onCompleted: {
+                connectedSources = sources;
+                populateAppsModel("/");
+            }
+        }
+    }
+
+    function populateAppsModel(source) {
+        var entries = appsSource.data[source].entries;
+        var apps = [];
+
+        while (entries.length > 0) {
+            var entry = appsSource.data[entries.shift()];
+            console.log(entry);
+
+            if (entry) {
+                if (entry.isApp) {
+                    if (entry.display) {
+                        Tools.insertSorted({
+                           name: entry.name,
+                           icon: entry.iconName,
+                           url: entry.entryPath
+                        }, apps);
+                    }
+                } else {
+                    entries.unshift(...entry.entries);
+                }
+            }
+        }
+
+        apps.map((e) => {
+            appsModel.append(e);
+        });
+        appsGridContainer.appsGrid.reset();
     }
 
     function toggleDash() {
         topContainer.queryField.text = "";
         isOpen = !isOpen;
 //        SuperXDashPlugin.Utils.showDesktop(isOpen);
-        appsGridContainer.appsGrid.reset();
         toggle();
+        appsGridContainer.appsGrid.reset();
     }
 }

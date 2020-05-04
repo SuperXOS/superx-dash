@@ -10,3 +10,22 @@ function listModelSort(listModel, compareFunction) {
     }
     listModel.remove( sorted, indexes.length - sorted )
 }
+
+function insertSorted(insertedObject,arr) {
+    let isLast=true;
+    if(arr.length===0)
+        arr.push(insertedObject)
+    else {
+        for (let i = 0, len = arr.length; i < len; i++) {
+            if (insertedObject.name < arr[i].name) {
+                isLast = false;
+                arr.splice(i, 0, insertedObject);
+                break;
+            }
+        }
+        if(isLast){
+            arr.push(insertedObject);//add to the end
+        }
+    }
+    return arr;
+}

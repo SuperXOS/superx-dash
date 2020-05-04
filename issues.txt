@@ -6,16 +6,17 @@
 [X] Decrease spacing across all items to make up space for more apps
 [X] Implement scroll to change page
 
-[ ] Show loader while loading apps
-[ ] Merge favorites section should get prepended to all applications
-[ ] Fix "All applications" loading the applications one by one (1)
-[ ] Multiple listing of same application
-[ ] Remove empty items from last page 
 [X] Search Field should be single line instead of multiline
 [X] Icon Highlights
 [X] Plasma Theme Integration with icon highlight
 [X] Plasma Theme Integration with Search field
 [X] Keyboard Navigation
-
+[ ] Use Plasma Data Sources to fetch appdata
+[-] Show loader while loading apps
+[X] Enable Keyboard Navigation on search results page
+[X] Fix "All applications" loading the applications one by one (1)
+[X] Multiple listing of same application
+[X] Remove empty items from last page 
+[ ] Merge favorites section should get prepended to all applications
 
 (1) Check plasma data sources
