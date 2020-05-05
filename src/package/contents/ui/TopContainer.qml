@@ -45,11 +45,16 @@ Item {
         height: 30
         anchors.centerIn: parent
         placeholderText: "Search"
+        onCursorVisibleChanged: cursorVisible = false
         background: Rectangle {
             radius: 4
             color: Kirigami.Theme.activeBackgroundColor
         }
         color: Kirigami.Theme.textColor
+        focus: true
+        onActiveFocusChanged: {
+            queryField.focus = true;
+        }
 
         onTextChanged: {
             var t = text.trim();
@@ -57,17 +62,35 @@ Item {
             if (t.length === 0) {
                 text = "";
             }
-
-            appsGridContainer.focus();
         }
         Keys.onPressed: {
             switch(event.key) {
+                case Qt.Key_Up:
+                    appsGridContainer.appsGrid.moveHighlightUp();
+                    appsGridContainer.krunnerResultsGrid.moveHighlightUp();
+                    event.accepted = true;
+                    break;
+                case Qt.Key_Down:
+                    appsGridContainer.appsGrid.moveHighlightDown();
+                    appsGridContainer.krunnerResultsGrid.moveHighlightDown();
+                    event.accepted = true;
+                    break;
+                case Qt.Key_Left:
+                    appsGridContainer.appsGrid.moveHighlightLeft();
+                    appsGridContainer.krunnerResultsGrid.moveHighlightLeft();
+                    event.accepted = true;
+                    break;
+                case Qt.Key_Right:
+                    appsGridContainer.appsGrid.moveHighlightRight();
+                    appsGridContainer.krunnerResultsGrid.moveHighlightRight();
+                    event.accepted = true;
+                    break;
+
                 case Qt.Key_Enter:
                 case Qt.Key_Return:
-                    // FIXME: Fix this hack to handle Enter/Return key
-                    if (queryField.text.length == 0) {
+                    if (appsGridContainer.appsGrid.visible) {
                         appsGridContainer.appsGrid.clickHighlightedItem();
-                    } else {
+                    } else if (appsGridContainer.krunnerResultsGrid.visible) {
                         appsGridContainer.krunnerResultsGrid.clickHighlightedItem();
                     }
 

@@ -20,7 +20,8 @@
 
 [X] Fix Dash not showing icons when opened first time
 [ ] Show loader while loading apps
-[ ] Fix Keyboard Navigation
+[X] Fix Keyboard Navigation in Search results page
+[X] Fix keyboard navigated highlight item in last page
 [X] Fix Duplicate item listing in "All Applications"
 [X] Differentiate pinned items from others
 [ ] Display System Favorites

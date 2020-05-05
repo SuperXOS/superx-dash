@@ -68,8 +68,8 @@ Item {
             interactive: false
             currentIndex: highlightIndex
             highlight: Rectangle {
-                width: parent.cellWidth
-                height: parent.cellHeight
+                width: root.cellWidth
+                height: root.cellHeight
                 radius: 4
                 color: Qt.rgba(Kirigami.Theme.highlightColor.r, Kirigami.Theme.highlightColor.g, Kirigami.Theme.highlightColor.b, 0.2)
                 visible: pageHolder.currentIndex == index
@@ -151,14 +151,14 @@ Item {
 
     function moveHighlightUp() {
         if(highlightIndex-cols < 0) {
-            highlightIndex = itemsPerPage - (cols-highlightIndex);
+            return
         } else {
             highlightIndex = highlightIndex-cols;
         }
     }
     function moveHighlightDown() {
-        if(highlightIndex+cols >= itemsPerPage) {
-            highlightIndex = highlightIndex%10;
+        if(highlightIndex + cols >= pageHolder.currentItem.count || highlightIndex+cols >= itemsPerPage) {
+            return
         } else {
             highlightIndex = highlightIndex+cols;
         }
@@ -166,20 +166,20 @@ Item {
     function moveHighlightLeft() {
         if (highlightIndex%cols-1 >= 0) {
             highlightIndex--;
-        } else {
-            if (pageHolder.currentIndex > 0) {
-                pageHolder.currentIndex--;
-            }
+        } else if (pageHolder.currentIndex > 0) {
+            pageHolder.currentIndex--;
             highlightIndex = highlightIndex+cols-1;
         }
     }
     function moveHighlightRight() {
+        if (highlightIndex + 1 >= pageHolder.currentItem.count) {
+            return
+        }
+
         if (highlightIndex%cols+1 < cols) {
             highlightIndex++;
-        } else {
-            if (pageHolder.currentIndex < pages-1) {
-                pageHolder.currentIndex++;
-            }
+        } else if (pageHolder.currentIndex < pages-1) {
+            pageHolder.currentIndex++;
             highlightIndex = highlightIndex-cols+1;
         }
     }

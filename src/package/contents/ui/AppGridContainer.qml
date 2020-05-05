@@ -29,52 +29,9 @@ import "tools.js" as Tools
 
 Item {
     property TextArea queryField: null
-    property alias focusScope: keyboardNavFocusScope
     property alias appsGrid: appsGrid
     property alias krunnerResultsGrid: krunnerResultsGrid
-    property alias krunnerResultsModel: krunnerResultsModel
     property string headingText: "Applications"
-
-    FocusScope {
-        id: keyboardNavFocusScope
-        focus: true
-        onActiveFocusChanged: {
-            keyboardNavFocusScope.forceActiveFocus()
-        }
-
-        Keys.forwardTo: queryField
-        Keys.onPressed: {
-            console.log(event.key)
-            switch(event.key) {
-                case Qt.Key_Up:
-                    appsGrid.moveHighlightUp();
-                    krunnerResultsGrid.moveHighlightUp();
-                    break;
-                case Qt.Key_Down:
-                    appsGrid.moveHighlightDown();
-                    krunnerResultsGrid.moveHighlightDown();
-                    break;
-                case Qt.Key_Left:
-                    appsGrid.moveHighlightLeft();
-                    krunnerResultsGrid.moveHighlightLeft();
-                    break;
-                case Qt.Key_Right:
-                    appsGrid.moveHighlightRight();
-                    krunnerResultsGrid.moveHighlightRight();
-                    break;
-
-                case Qt.Key_Enter:
-                case Qt.Key_Return:
-                    if (appsGrid.visible) {
-                        appsGrid.clickHighlightedItem();
-                    } else if (krunnerResultsGrid.visible) {
-                        krunnerResultsGrid.clickHighlightedItem();
-                    }
-
-                    break;
-            }
-        }
-    }
 
     Milou.ResultsModel {
         id: krunnerResultsModel
@@ -206,9 +163,5 @@ Item {
                 queryField.text = "";
             }
         }
-    }
-
-    function focus() {
-        keyboardNavFocusScope.focus = true;
     }
 }
