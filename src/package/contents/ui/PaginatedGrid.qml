@@ -105,6 +105,13 @@ Item {
                     }
                 }
             }
+
+            MouseArea {
+                anchors.fill: parent
+                acceptedButtons: Qt.LeftButton
+                onClicked: toggleDash()
+                z: -1
+            }
         }
     }
 

@@ -24,4 +24,4 @@
 [X] Fix Duplicate item listing in "All Applications"
 [ ] Differentiate pinned items from others
 [ ] Display System Favorites
-[ ] Click empty space in paginated grid to close dash
+[X] Click empty space in paginated grid to close dash
