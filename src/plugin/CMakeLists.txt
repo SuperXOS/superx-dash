@@ -7,7 +7,6 @@ set(PLUGIN_SRCS
 
     ### DEBUG
     ../package/contents/ui/AppGridContainer.qml
-    ../package/contents/ui/CategoriesSidebarContainer.qml
     ../package/contents/ui/CompactRepresentation.qml
     ../package/contents/ui/Dash.qml
     ../package/contents/ui/Heading.qml
