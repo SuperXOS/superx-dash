@@ -27,4 +27,4 @@
 [ ] Display System Favorites
 [X] Click empty space in paginated grid to close dash
 [X] Update applist on applications installed/removed
-[ ] Optimize apps loading time
+[X] Optimize apps loading time
