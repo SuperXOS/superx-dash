@@ -58,6 +58,9 @@ Kicker.DashboardWindow {
             // { name, icon, url }
         }
 
+        /**
+        * Model for storing categories
+        */
         ListModel {
             id: categoriesModel
 
@@ -243,7 +246,6 @@ Kicker.DashboardWindow {
                                     appsModel.clear();
 
                                     appsGridContainer.headingText = model.name;
-//                                    SuperXDashPlugin.AppsList.appsList(model.url);
                                     populateAppsModel(model.url)
 
                                     topContainer.queryField.text = "";
@@ -253,21 +255,6 @@ Kicker.DashboardWindow {
                     }
 
                 }
-            }
-        }
-        
-        /**
-        * Fetch the applications list when QML gets loaded
-        */
-        Component.onCompleted: {
-            var pinnedJsonArray = plasmoid.configuration.pinned && JSON.parse(plasmoid.configuration.pinned) || [];
-
-            for (var index in pinnedJsonArray) {
-                pinnedModel.append({
-                    name: pinnedJsonArray[index].name,
-                    icon: pinnedJsonArray[index].icon,
-                    url: pinnedJsonArray[index].url
-                });
             }
         }
 
@@ -289,15 +276,23 @@ Kicker.DashboardWindow {
             Component.onCompleted: {
                 connectedSources = sources;
                 populateAppsModel("/");
+            }
+        }
 
-                console.log("### DEBUG", JSON.stringify(plasmoid.configuration.pinned, null, 2))
+        Timer {
+            id: dashOpenTimer
+            repeat: false
+            interval: 100
+            onTriggered: {
+                console.log("### Dash Opened");
+                appsGridContainer.appsGrid.reset();
             }
         }
     }
 
     function populateAppsModel(source) {
         var entries = appsSource.data[source].entries;
-        var apps = [];
+        var appsArray = [];
         var pinnedJsonArray = plasmoid.configuration.pinned && JSON.parse(plasmoid.configuration.pinned) || [];
 
         if (source === "/") {
@@ -327,18 +322,21 @@ Kicker.DashboardWindow {
                             }
                         }
 
-
-                        Tools.insertSorted({
+                        appsArray.push({
                            name: entry.name,
                            icon: entry.iconName,
                            url: entry.entryPath
-                        }, apps);
+                        });
                     }
                 } else {
                     entries.unshift(...entry.entries);
                 }
             }
         }
+
+        console.log(JSON.stringify(appsArray[0]));
+        appsArray.sort((a, b) => a.name.toLowerCase().localeCompare(b));
+        console.log(JSON.stringify(appsArray[0]));
 
         appsModel.clear();
 
@@ -353,7 +351,7 @@ Kicker.DashboardWindow {
             });
         }
 
-        apps.map((e) => {
+        appsArray.map((e) => {
             appsModel.append(e);
         });
 
@@ -365,6 +363,9 @@ Kicker.DashboardWindow {
         isOpen = !isOpen;
 //        SuperXDashPlugin.Utils.showDesktop(isOpen);
         toggle();
-        appsGridContainer.appsGrid.reset();
+
+        if (isOpen) {
+            dashOpenTimer.start();
+        }
     }
 }
