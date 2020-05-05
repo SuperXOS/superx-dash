@@ -17,12 +17,14 @@
 [X] Multiple listing of same application
 [X] Remove empty items from last page 
 [X] Merge favorites section should get prepended to all applications
+[-] Show loader while loading apps
 
 [X] Fix Dash not showing icons when opened first time
-[ ] Show loader while loading apps
 [X] Fix Keyboard Navigation in Search results page
 [X] Fix keyboard navigated highlight item in last page
 [X] Fix Duplicate item listing in "All Applications"
 [X] Differentiate pinned items from others
 [ ] Display System Favorites
 [X] Click empty space in paginated grid to close dash
+[X] Update applist on applications installed/removed
+[ ] Optimize apps loading time

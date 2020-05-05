@@ -38,6 +38,7 @@ import "tools.js" as Tools
 Kicker.DashboardWindow {
     property bool isOpen: false;
     property bool showPinned: true;
+    property var allAppsSorted: [];
 
     backgroundColor: Qt.rgba(0,0,0,0.7)
     onKeyEscapePressed: {
@@ -264,13 +265,26 @@ Kicker.DashboardWindow {
             z: -10
         }
 
+        Timer {
+            id: sourcesChangedTimer
+            interval: 1000
+            repeat: false
+            onTriggered: {
+                populateAppsModel("/");
+            }
+        }
+
         PlasmaCore.DataSource {
             id: appsSource
             engine: "apps"
 
             onSourceAdded: {
                 connectSource(source);
-                console.log("onSourceAdded", source);
+            }
+
+            onSourcesChanged: {
+                sourcesChangedTimer.stop();
+                sourcesChangedTimer.start();
             }
 
             Component.onCompleted: {
@@ -294,48 +308,42 @@ Kicker.DashboardWindow {
         var apps = {};
         var pinnedJsonArray = plasmoid.configuration.pinned && JSON.parse(plasmoid.configuration.pinned) || [];
 
-        if (source === "/") {
-            showPinned = true;
-        } else {
-            showPinned = false;
-        }
+        console.log("### All Apps length", allAppsSorted.length)
 
-        while (entries.length > 0) {
-            var entry = appsSource.data[entries.shift()];
+        /**
+         * If source is "All Apps" then populate allAppsSorted if not populated and continue
+         * If source is something else, populate and continue
+         **/
+        if ((source === "/" && allAppsSorted.length === 0) || source !== "/") {
 
-            if (entry) {
-                if (entry.isApp) {
-                    if (entry.display) {
-                        if (showPinned) {
-                            var skip = false;
+            while (entries.length > 0) {
+                var entry = appsSource.data[entries.shift()];
 
-                            for (var index in pinnedJsonArray) {
-                                if (pinnedJsonArray[index].url === entry.entryPath) {
-                                    skip = true
-                                    break;
-                                }
-                            }
-
-                            if (skip) {
-                                continue;
-                            }
+                if (entry) {
+                    if (entry.isApp) {
+                        if (entry.display) {
+                            apps[entry.menuId] = {
+                               name: entry.name,
+                               icon: entry.iconName,
+                               url: entry.entryPath
+                            };
                         }
-
-                        apps[entry.menuId] = {
-                           name: entry.name,
-                           icon: entry.iconName,
-                           url: entry.entryPath
-                        };
+                    } else {
+                        entries.unshift(...entry.entries);
                     }
-                } else {
-                    entries.unshift(...entry.entries);
                 }
+            }
+
+            if (source === "/") {
+                allAppsSorted = Object.keys(apps).map((e) => [e, apps[e].name]).sort((a,b) => a[1].localeCompare(b[1])).map((e) => apps[e[0]]);
             }
         }
 
         appsModel.clear();
 
-        if (showPinned) {
+//        console.log("All Apps Sorted", JSON.stringify(allAppsSorted, null, 2));
+
+        if (source === "/") {
             pinnedJsonArray.map((e) => {
                 appsModel.append({
                     name: e.name,
@@ -344,9 +352,24 @@ Kicker.DashboardWindow {
                     isPinned: true
                 });
             });
-        }
 
-        Object.keys(apps).map((e) => [e, apps[e].name]).sort((a,b) => a[1].localeCompare(b[1])).map((e) => appsModel.append(apps[e[0]]));
+            allAppsSorted.forEach((app) => {
+                var skip = false;
+
+                for (var index in pinnedJsonArray) {
+                    if (pinnedJsonArray[index].url === app.url) {
+                        skip = true
+                        break;
+                    }
+                }
+
+                if (!skip) {
+                    appsModel.append(app);
+                }
+            });
+        } else {
+            Object.keys(apps).map((e) => [e, apps[e].name]).sort((a,b) => a[1].localeCompare(b[1])).map((e) => appsModel.append(apps[e[0]]));
+        }
 
         appsGridContainer.appsGrid.reset();
     }
