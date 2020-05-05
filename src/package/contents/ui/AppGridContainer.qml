@@ -51,7 +51,7 @@ Item {
             text: "Pin to top"
             onClicked: {
                 var pinnedJsonArray = plasmoid.configuration.pinned && JSON.parse(plasmoid.configuration.pinned) || [];
-                var model = appsModel.get(_appsCtxMenu.index);
+                var model = apps[_appsCtxMenu.index];
                 var modelJson = {
                     name: model.name,
                     icon: model.icon,
@@ -75,7 +75,7 @@ Item {
                 var pinnedJsonArray = JSON.parse(plasmoid.configuration.pinned);
 
                 for (var index in pinnedJsonArray) {
-                    if (pinnedJsonArray[index].url === appsModel.get(_pinnedCtxMenu.index).url) {
+                    if (pinnedJsonArray[index].url === apps[_pinnedCtxMenu.index].url) {
                         pinnedJsonArray.splice(index, 1);
                         break;
                     }
@@ -108,16 +108,16 @@ Item {
 
             cellWidth: 180
             cellHeight: 180
-            totalCount: appsModel.count
+            totalCount: apps.length
 
             delegate: IconItem {
                 anchors.fill: parent
-                icon: appsModel.get(itemIndex).icon
-                label: appsModel.get(itemIndex).name
-                isPinned: appsModel.get(itemIndex).isPinned ? true : false
+                icon: apps[itemIndex].icon
+                label: apps[itemIndex].name
+                isPinned: apps[itemIndex].isPinned ? true : false
 
                 onOpenContextMenu: {
-                    if (appsModel.get(itemIndex).isPinned) {
+                    if (apps[itemIndex].isPinned) {
                         _pinnedCtxMenu.index = itemIndex;
                         _pinnedCtxMenu.popup();
                     } else {
@@ -126,12 +126,12 @@ Item {
                     }
                 }
                 onClicked: {
-                    SuperXDashPlugin.AppsList.openApp(appsModel.get(itemIndex).url);
+                    SuperXDashPlugin.AppsList.openApp(apps[itemIndex].url);
                     toggleDash();
                 }
             }
             onHighlightClicked: {
-                SuperXDashPlugin.AppsList.openApp(appsModel.get(index).url);
+                SuperXDashPlugin.AppsList.openApp(apps[index].url);
                 toggleDash();
             }
         }

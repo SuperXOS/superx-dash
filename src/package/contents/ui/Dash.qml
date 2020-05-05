@@ -39,6 +39,7 @@ Kicker.DashboardWindow {
     property bool isOpen: false;
     property bool showPinned: true;
     property var allAppsSorted: [];
+    property var apps: [];
 
     backgroundColor: Qt.rgba(0,0,0,0.7)
     onKeyEscapePressed: {
@@ -244,7 +245,7 @@ Kicker.DashboardWindow {
                                 anchors.fill: parent
                                 hoverEnabled: true
                                 onClicked: {
-                                    appsModel.clear();
+                                    apps = []
 
                                     appsGridContainer.headingText = model.name;
                                     populateAppsModel(model.url)
@@ -298,6 +299,7 @@ Kicker.DashboardWindow {
             repeat: false
             interval: 100
             onTriggered: {
+                appsGridContainer.appsGrid.totalCount = apps.length
                 appsGridContainer.appsGrid.reset();
             }
         }
@@ -305,24 +307,21 @@ Kicker.DashboardWindow {
 
     function populateAppsModel(source) {
         var entries = appsSource.data[source].entries;
-        var apps = {};
-        var pinnedJsonArray = plasmoid.configuration.pinned && JSON.parse(plasmoid.configuration.pinned) || [];
-
-        console.log("### All Apps length", allAppsSorted.length)
+        var _apps = {};
+        var pinnedJsonObj = plasmoid.configuration.pinned && JSON.parse(plasmoid.configuration.pinned) || {};
 
         /**
          * If source is "All Apps" then populate allAppsSorted if not populated and continue
          * If source is something else, populate and continue
          **/
         if ((source === "/" && allAppsSorted.length === 0) || source !== "/") {
-
             while (entries.length > 0) {
                 var entry = appsSource.data[entries.shift()];
 
                 if (entry) {
                     if (entry.isApp) {
                         if (entry.display) {
-                            apps[entry.menuId] = {
+                            _apps[entry.menuId] = {
                                name: entry.name,
                                icon: entry.iconName,
                                url: entry.entryPath
@@ -335,20 +334,19 @@ Kicker.DashboardWindow {
             }
 
             if (source === "/") {
-                allAppsSorted = Object.keys(apps).map((e) => [e, apps[e].name]).sort((a,b) => a[1].localeCompare(b[1])).map((e) => apps[e[0]]);
+                allAppsSorted = Object.keys(_apps).map((e) => [e, _apps[e].name]).sort((a,b) => a[1].localeCompare(b[1])).map((e) => _apps[e[0]]);
             }
         }
 
-        appsModel.clear();
-
+        apps = []
 //        console.log("All Apps Sorted", JSON.stringify(allAppsSorted, null, 2));
 
         if (source === "/") {
-            pinnedJsonArray.map((e) => {
-                appsModel.append({
-                    name: e.name,
-                    icon: e.icon,
-                    url: e.url,
+            Object.keys(pinnedJsonObj).map((k) => {
+                apps.push({
+                    name: pinnedJsonObj[k].name,
+                    icon: pinnedJsonObj[k].icon,
+                    url: pinnedJsonObj[k].url,
                     isPinned: true
                 });
             });
@@ -356,21 +354,15 @@ Kicker.DashboardWindow {
             allAppsSorted.forEach((app) => {
                 var skip = false;
 
-                for (var index in pinnedJsonArray) {
-                    if (pinnedJsonArray[index].url === app.url) {
-                        skip = true
-                        break;
-                    }
-                }
-
-                if (!skip) {
-                    appsModel.append(app);
+                if (!pinnedJsonObj[app.url]) {
+                    apps.push(app);
                 }
             });
         } else {
-            Object.keys(apps).map((e) => [e, apps[e].name]).sort((a,b) => a[1].localeCompare(b[1])).map((e) => appsModel.append(apps[e[0]]));
+            Object.keys(_apps).map((e) => [e, _apps[e].name]).sort((a,b) => a[1].localeCompare(b[1])).map((e) => apps.push(_apps[e[0]]));
         }
 
+        appsGridContainer.appsGrid.totalCount = apps.length;
         appsGridContainer.appsGrid.reset();
     }
 
