@@ -37,10 +37,6 @@ Item {
     property int cellWidth
     property int cellHeight
     property int totalCount
-//    property var model
-//    property int modelType: ModelType.ListModel
-//    property string iconModelKey
-//    property string labelModelKey
     property Component delegate
     
     property int rows: Math.floor(pageHolder.height/root.cellHeight)
@@ -49,8 +45,6 @@ Item {
     property int itemsPerPage: rows*cols
     property int highlightIndex: 0
 
-//    signal clicked(var model)
-//    signal openContextMenu(int index);
     signal highlightClicked(int index);
     
     ListView {
@@ -186,21 +180,6 @@ Item {
         root.highlightClicked(pageHolder.currentIndex*itemsPerPage+highlightIndex)
     }
 
-//    function getLabel(index) {
-//        if (modelType === PaginatedGrid.ModelType.MilouModel) {
-//            return model.data(model.index(0, 0))[labelModelKey];
-//        } else {
-//            return model.get(index)[labelModelKey];
-//        }
-//    }
-//    function getIcon(index) {
-//        if (modelType === PaginatedGrid.ModelType.MilouModel) {
-//            return model.data(model.index(0, 0))[iconModelKey];
-//        } else {
-//            return model.get(index)[iconModelKey];
-//        }
-//    }
-
     function reset() {
         root.rows = 0;
         root.cols = 0;
@@ -212,8 +191,5 @@ Item {
         root.cols = Math.floor(pageHolder.width/root.cellWidth);
         root.pages = Math.ceil(totalCount/(rows*cols));
         root.itemsPerPage = rows*cols;
-
-//        console.log("Model Type", PaginatedGrid.ModelType.ListModel, PaginatedGrid.ModelType.MilouModel, modelType)
-//        console.log(root.rows, root.cols, root.pages, root.itemsPerPage)
     }
 }
