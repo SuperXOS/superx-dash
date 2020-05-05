@@ -291,7 +291,7 @@ Kicker.DashboardWindow {
 
     function populateAppsModel(source) {
         var entries = appsSource.data[source].entries;
-        var appsArray = [];
+        var apps = {};
         var pinnedJsonArray = plasmoid.configuration.pinned && JSON.parse(plasmoid.configuration.pinned) || [];
 
         if (source === "/") {
@@ -321,21 +321,17 @@ Kicker.DashboardWindow {
                             }
                         }
 
-                        Tools.insertSorted({
+                        apps[entry.menuId] = {
                            name: entry.name,
                            icon: entry.iconName,
                            url: entry.entryPath
-                        }, appsArray);
+                        };
                     }
                 } else {
                     entries.unshift(...entry.entries);
                 }
             }
         }
-
-//        console.log(JSON.stringify(appsArray[0]));
-//        appsArray.sort((a, b) => b.name.toLowerCase().localeCompare(a));
-//        console.log(JSON.stringify(appsArray[0]));
 
         appsModel.clear();
 
@@ -350,9 +346,7 @@ Kicker.DashboardWindow {
             });
         }
 
-        appsArray.map((e) => {
-            appsModel.append(e);
-        });
+        Object.keys(apps).map((e) => [e, apps[e].name]).sort((a,b) => a[1].localeCompare(b[1])).map((e) => appsModel.append(apps[e[0]]));
 
         appsGridContainer.appsGrid.reset();
     }

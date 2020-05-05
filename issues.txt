@@ -12,11 +12,16 @@
 [X] Plasma Theme Integration with Search field
 [X] Keyboard Navigation
 [X] Use Plasma Data Sources to fetch appdata
-[-] Show loader while loading apps
 [X] Enable Keyboard Navigation on search results page
-[X] Fix "All applications" loading the applications one by one (1)
+[X] Fix "All applications" loading the applications one by one
 [X] Multiple listing of same application
 [X] Remove empty items from last page 
 [X] Merge favorites section should get prepended to all applications
 
-(1) Check plasma data sources
+[X] Fix Dash not showing icons when opened first time
+[ ] Show loader while loading apps
+[ ] Fix Keyboard Navigation
+[X] Fix Duplicate item listing in "All Applications"
+[ ] Differentiate pinned items from others
+[ ] Display System Favorites
+[ ] Click empty space in paginated grid to close dash
