@@ -284,7 +284,6 @@ Kicker.DashboardWindow {
             repeat: false
             interval: 100
             onTriggered: {
-                console.log("### Dash Opened");
                 appsGridContainer.appsGrid.reset();
             }
         }
@@ -322,11 +321,11 @@ Kicker.DashboardWindow {
                             }
                         }
 
-                        appsArray.push({
+                        Tools.insertSorted({
                            name: entry.name,
                            icon: entry.iconName,
                            url: entry.entryPath
-                        });
+                        }, appsArray);
                     }
                 } else {
                     entries.unshift(...entry.entries);
@@ -334,9 +333,9 @@ Kicker.DashboardWindow {
             }
         }
 
-        console.log(JSON.stringify(appsArray[0]));
-        appsArray.sort((a, b) => a.name.toLowerCase().localeCompare(b));
-        console.log(JSON.stringify(appsArray[0]));
+//        console.log(JSON.stringify(appsArray[0]));
+//        appsArray.sort((a, b) => b.name.toLowerCase().localeCompare(a));
+//        console.log(JSON.stringify(appsArray[0]));
 
         appsModel.clear();
 
