@@ -157,6 +157,7 @@ Item {
                 anchors.fill: parent
                 icon: appsModel.get(itemIndex).icon
                 label: appsModel.get(itemIndex).name
+                isPinned: appsModel.get(itemIndex).isPinned ? true : false
 
                 onOpenContextMenu: {
                     if (appsModel.get(itemIndex).isPinned) {

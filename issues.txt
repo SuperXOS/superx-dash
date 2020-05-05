@@ -22,6 +22,6 @@
 [ ] Show loader while loading apps
 [ ] Fix Keyboard Navigation
 [X] Fix Duplicate item listing in "All Applications"
-[ ] Differentiate pinned items from others
+[X] Differentiate pinned items from others
 [ ] Display System Favorites
 [X] Click empty space in paginated grid to close dash

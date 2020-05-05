@@ -36,9 +36,37 @@ Item {
     property var icon
     property var label: ""
     property string color: "#00ffffff"
+    property bool isPinned: false
 
     signal clicked
     signal openContextMenu
+
+    Rectangle {
+        visible: isPinned
+        anchors.fill: parent
+        border.width: 2
+        border.color: "#55000000"
+        radius: 4
+        color: "#22000000"
+        z: -1
+
+        Kirigami.Icon {
+            width: 20
+            height: 20
+            source: "pin"
+            anchors {
+                top: parent.top
+                right: parent.right
+                margins: 5
+            }
+
+            ColorOverlay {
+                anchors.fill: parent
+                source: parent
+                color: "#ffffffff"
+            }
+        }
+    }
 
     Kirigami.Icon {
         id: appIcon
@@ -60,7 +88,7 @@ Item {
 
         anchors {
             top: appIcon.bottom
-            topMargin: 20
+            topMargin: 10
             left: parent.left
             leftMargin: 5
             right: parent.right
