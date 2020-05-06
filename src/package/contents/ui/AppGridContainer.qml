@@ -50,7 +50,7 @@ Item {
         MenuItem {
             text: "Pin to top"
             onClicked: {
-                var pinnedJsonArray = plasmoid.configuration.pinned && JSON.parse(plasmoid.configuration.pinned) || [];
+                var pinnedJsonObj = plasmoid.configuration.pinned && JSON.parse(plasmoid.configuration.pinned) || {};
                 var model = apps[_appsCtxMenu.index];
                 var modelJson = {
                     name: model.name,
@@ -58,8 +58,8 @@ Item {
                     url: model.url
                 };
 
-                pinnedJsonArray.push(modelJson);
-                plasmoid.configuration.pinned = JSON.stringify(pinnedJsonArray);
+                pinnedJsonObj[model.url] = modelJson;
+                plasmoid.configuration.pinned = JSON.stringify(pinnedJsonObj);
                 populateAppsModel("/");
             }
         }
@@ -72,16 +72,13 @@ Item {
         MenuItem {
             text: "Unpin"
             onClicked: {
-                var pinnedJsonArray = JSON.parse(plasmoid.configuration.pinned);
+                var pinnedJsonObj = JSON.parse(plasmoid.configuration.pinned);
 
-                for (var index in pinnedJsonArray) {
-                    if (pinnedJsonArray[index].url === apps[_pinnedCtxMenu.index].url) {
-                        pinnedJsonArray.splice(index, 1);
-                        break;
-                    }
+                if (pinnedJsonObj[apps[_pinnedCtxMenu.index].url]) {
+                    delete pinnedJsonObj[apps[_pinnedCtxMenu.index].url];
                 }
 
-                plasmoid.configuration.pinned = JSON.stringify(pinnedJsonArray);
+                plasmoid.configuration.pinned = JSON.stringify(pinnedJsonObj);
                 populateAppsModel("/");
             }
         }
