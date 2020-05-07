@@ -44,6 +44,7 @@ Item {
     property int pages: Math.ceil(totalCount/(rows*cols))
     property int itemsPerPage: rows*cols
     property int highlightIndex: 0
+    property bool hoverEnabled: false
 
     signal highlightClicked(int index);
     
@@ -101,7 +102,12 @@ Item {
                     hoverEnabled: true
                     acceptedButtons: Qt.NoButton
                     onEntered: {
-                        highlightIndex = index;
+                        if (root.hoverEnabled) {
+                            highlightIndex = index;
+                        }
+                    }
+                    onExited: {
+                        root.hoverEnabled = true;
                     }
                 }
             }

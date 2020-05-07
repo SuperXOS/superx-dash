@@ -368,6 +368,13 @@ Kicker.DashboardWindow {
 
     function toggleDash() {
         topContainer.queryField.text = "";
+
+        appsGridContainer.appsGrid.hoverEnabled = false;
+        appsGridContainer.appsGrid.highlightIndex = 0;
+
+        appsGridContainer.krunnerResultsGrid.hoverEnabled = false;
+        appsGridContainer.krunnerResultsGrid.highlightIndex = 0;
+
         isOpen = !isOpen;
 //        SuperXDashPlugin.Utils.showDesktop(isOpen);
         toggle();

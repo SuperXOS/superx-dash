@@ -38,8 +38,14 @@ Item {
         queryString: queryField.text
         limit: 15
         onRowsInserted: {
-            krunnerResultsGrid.totalCount = krunnerResultsModel.rowCount()
-            krunnerResultsGrid.reset()
+            krunnerResultsGrid.totalCount = krunnerResultsModel.rowCount();
+            krunnerResultsGrid.reset();
+
+            appsGrid.hoverEnabled = false;
+            appsGrid.highlightIndex = 0;
+
+            krunnerResultsGrid.hoverEnabled = false;
+            krunnerResultsGrid.highlightIndex = 0;
         }
     }
 
