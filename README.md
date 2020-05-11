@@ -1,6 +1,17 @@
 # SuperX Dash
 Plasma-based application launcher for [SuperXOS](http://superxos.com)
 
+# Screenshots
+<p align="center">
+  <img src="https://gist.githubusercontent.com/anupam-git/7e2701be8d330e16001e00cec6033bac/raw/68bed6d78f2d868e81d123956a02184bce15373d/ss1.png" >
+  <span><b>All Applications with Pinnned Items</b></span>
+</p>
+
+<p align="center">
+  <img src="https://gist.githubusercontent.com/anupam-git/7e2701be8d330e16001e00cec6033bac/raw/68bed6d78f2d868e81d123956a02184bce15373d/ss2.png" >
+  <span><b>KRunner Query Result</b></span>
+</p>
+
 # Build Dependencies
 * QtQuick
 * KF5 KIO
