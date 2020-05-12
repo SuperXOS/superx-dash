@@ -123,19 +123,48 @@ Kicker.DashboardWindow {
             }
         }
 
-        SystemFavoritesContainer {
-            visible: false
-            height: 40
+//        SystemFavoritesContainer {
+//            height: 40
+//            anchors {
+//                top: parent.top
+//                left: parent.left
+//                topMargin: 30
+//            }
+//        }
+
+        Item {
+            id: shutdownButton
+            width: 30
+            height: 30
             anchors {
                 top: parent.top
                 left: parent.left
-                topMargin: 30
+                margins: 10
+            }
+
+            Kirigami.Icon {
+                anchors.fill: parent
+                source: "system-shutdown"
+
+                ColorOverlay {
+                    anchors.fill: parent
+                    source: parent
+                    color: "#ffffffff"
+                }
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                onClicked: {
+                    SuperXDashPlugin.SystemFavourites.onShutdownClicked();
+                    toggleDash();
+                }
             }
         }
 
         Kirigami.Icon {
-            width: 20
-            height: 20
+            width: 30
+            height: 30
             source: "window-close"
             anchors {
                 top: parent.top
