@@ -134,13 +134,13 @@ Kicker.DashboardWindow {
         }
 
         Kirigami.Icon {
-            width: 40
-            height: 40
+            width: 20
+            height: 20
             source: "window-close"
             anchors {
                 top: parent.top
                 right: parent.right
-                margins: 30
+                margins: 10
             }
 
             ColorOverlay {
