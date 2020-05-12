@@ -41,13 +41,9 @@ Item {
     signal clicked
     signal openContextMenu
 
-    Rectangle {
+    Item {
         visible: isPinned
         anchors.fill: parent
-        border.width: 2
-        border.color: "#55000000"
-        radius: 4
-        color: "#22000000"
         z: -1
 
         Kirigami.Icon {
