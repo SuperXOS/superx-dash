@@ -28,7 +28,7 @@ import org.kde.kirigami 2.7 as Kirigami
 
 Item {
     id: root
-    
+
     enum ModelType {
         ListModel,
         MilouModel
@@ -38,7 +38,7 @@ Item {
     property int cellHeight
     property int totalCount
     property Component delegate
-    
+
     property int rows: Math.floor(pageHolder.height/root.cellHeight)
     property int cols: Math.floor(pageHolder.width/root.cellWidth)
     property int pages: Math.ceil(totalCount/(rows*cols))
@@ -47,10 +47,11 @@ Item {
     property bool hoverEnabled: false
 
     signal highlightClicked(int index);
-    
+    signal scrollingInitiated();
+
     ListView {
         id: pageHolder
-        
+
         clip: true
         anchors.fill: parent
         orientation: ListView.Horizontal
@@ -140,6 +141,8 @@ Item {
         acceptedButtons: Qt.NoButton
         onWheel: {
             if (!scrollTimer.running) {
+                root.scrollingInitiated();
+
                 var isMouseWheelUp = wheel.angleDelta.y < 0;
 
                 if (isMouseWheelUp && (pageHolder.currentIndex+1) < pages) {

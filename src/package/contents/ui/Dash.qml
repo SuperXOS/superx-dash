@@ -29,6 +29,7 @@ import com.superxos.dash 1.0 as SuperXDashPlugin
 import org.kde.plasma.plasmoid 2.0
 import org.kde.plasma.private.kicker 0.1 as Kicker
 import org.kde.plasma.core 2.0 as PlasmaCore
+import org.kde.kcoreaddons 1.0 as KCoreAddons
 
 import "tools.js" as Tools
 
@@ -49,6 +50,10 @@ Kicker.DashboardWindow {
     mainItem: Item {
         id: root
         anchors.fill: parent
+
+        KCoreAddons.KUser {
+            id: kuser
+        }
 
         /**
         * Model for storing list of installed applications.
@@ -132,6 +137,28 @@ Kicker.DashboardWindow {
 //            }
 //        }
 
+//        Item {
+//            id: infoContainer
+//            height: 30
+//            width: 100
+//            anchors {
+//                top: parent.top
+//                left: parent.left
+//                margins: 10
+//            }
+
+//            RowLayout {
+//                anchors.fill: parent
+
+//                Kirigami.Icon {
+//                    width: 30
+//                    height: 30
+//                    anchors.fill: parent
+//                    source: kuser.faceIconUrl
+//                }
+//            }
+//        }
+
         Item {
             id: shutdownButton
             width: 30
@@ -143,8 +170,11 @@ Kicker.DashboardWindow {
             }
 
             Kirigami.Icon {
-                anchors.fill: parent
+                width: 30
+                height: 30
                 source: "system-shutdown"
+                smooth: true
+                antialiasing: true
 
                 ColorOverlay {
                     anchors.fill: parent

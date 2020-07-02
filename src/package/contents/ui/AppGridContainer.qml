@@ -137,6 +137,10 @@ Item {
                 SuperXDashPlugin.AppsList.openApp(apps[index].url);
                 toggleDash();
             }
+            onScrollingInitiated: {
+                _pinnedCtxMenu.close();
+                _appsCtxMenu.close();
+            }
         }
 
         PaginatedGrid {
