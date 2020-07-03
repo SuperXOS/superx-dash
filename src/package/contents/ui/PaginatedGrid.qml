@@ -58,7 +58,7 @@ Item {
         snapMode: ListView.SnapOneItem
         model: pages
 
-        highlightMoveDuration: 1000
+        highlightMoveDuration: settings.paginationSpeed
         highlightMoveVelocity: -1
 
         delegate: GridView {

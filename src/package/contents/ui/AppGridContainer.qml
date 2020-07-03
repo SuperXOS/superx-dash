@@ -109,8 +109,8 @@ Item {
             Layout.fillHeight: true
             visible: !krunnerResultsGrid.visible
 
-            cellWidth: 180
-            cellHeight: 180
+            cellWidth: settings.gridItemSize
+            cellHeight: settings.gridItemSize
             totalCount: apps.length
 
             delegate: IconItem {
@@ -149,8 +149,8 @@ Item {
             Layout.fillHeight: true
             visible: queryField.text.length > 0
 
-            cellWidth: 180
-            cellHeight: 180
+            cellWidth: settings.gridItemSize
+            cellHeight: settings.gridItemSize
             totalCount: krunnerResultsModel.rowCount()
 
             delegate: IconItem {

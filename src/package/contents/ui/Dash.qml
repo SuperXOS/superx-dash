@@ -23,6 +23,7 @@ import QtQuick 2.14
 import QtQuick.Layouts 1.14
 import QtQuick.Controls 2.14
 import QtGraphicalEffects 1.14
+import Qt.labs.settings 1.0
 
 import org.kde.kirigami 2.7 as Kirigami
 import com.superxos.dash 1.0 as SuperXDashPlugin
@@ -50,6 +51,14 @@ Kicker.DashboardWindow {
     mainItem: Item {
         id: root
         anchors.fill: parent
+
+        Settings {
+            id: settings
+            category: "SuperXDash"
+
+            property int gridItemSize: 180;
+            property int paginationSpeed: 1000;
+        }
 
         KCoreAddons.KUser {
             id: kuser
