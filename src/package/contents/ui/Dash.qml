@@ -137,67 +137,13 @@ Kicker.DashboardWindow {
             }
         }
 
-//        SystemFavoritesContainer {
-//            height: 40
-//            anchors {
-//                top: parent.top
-//                left: parent.left
-//                topMargin: 30
-//            }
-//        }
-
-//        Item {
-//            id: infoContainer
-//            height: 30
-//            width: 100
-//            anchors {
-//                top: parent.top
-//                left: parent.left
-//                margins: 10
-//            }
-
-//            RowLayout {
-//                anchors.fill: parent
-
-//                Kirigami.Icon {
-//                    width: 30
-//                    height: 30
-//                    anchors.fill: parent
-//                    source: kuser.faceIconUrl
-//                }
-//            }
-//        }
-
-        Item {
-            id: shutdownButton
-            width: 30
-            height: 30
+        SystemFavoritesContainer {
+            id: infoContainer
+            height: 48
             anchors {
                 top: parent.top
-                left: parent.left
+                right: parent.right
                 margins: 10
-            }
-
-            Kirigami.Icon {
-                width: 30
-                height: 30
-                source: "system-shutdown"
-                smooth: true
-                antialiasing: true
-
-                ColorOverlay {
-                    anchors.fill: parent
-                    source: parent
-                    color: "#ffffffff"
-                }
-            }
-
-            MouseArea {
-                anchors.fill: parent
-                onClicked: {
-                    SuperXDashPlugin.SystemFavourites.onShutdownClicked();
-                    toggleDash();
-                }
             }
         }
 
@@ -207,7 +153,7 @@ Kicker.DashboardWindow {
             source: "window-close"
             anchors {
                 top: parent.top
-                right: parent.right
+                left: parent.left
                 margins: 10
             }
 
@@ -222,6 +168,8 @@ Kicker.DashboardWindow {
                 onClicked: {
                     toggleDash();
                 }
+            }KCoreAddons.KUser {
+                id: user
             }
         }
 
@@ -245,6 +193,7 @@ Kicker.DashboardWindow {
                 TopContainer {
                     id: topContainer
                     anchors.fill: parent
+                    anchors.topMargin: -32
                 }
             }
 
