@@ -26,27 +26,25 @@
 #include <QDBusConnection>
 #include <QDBusReply>
 #include <QDebug>
+#include <KWindowSystem/KWindowSystem>
 
-Utils::Utils(QObject *parent) : QObject(parent) {
-  if (!QDBusConnection::sessionBus().isConnected()) {
-    fprintf(stderr,
-            "Cannot connect to the D-Bus session bus.\n"
-            "To start it, run:\n"
-            "\teval `dbus-launch --auto-syntax`\n");
-
-    return;
-  }
-
-  plasmaShellDBusInterface = new QDBusInterface(
-      "org.kde.plasmashell", "/PlasmaShell", "org.kde.PlasmaShell",
-      QDBusConnection::sessionBus(), parent);
-
-  if (!plasmaShellDBusInterface->isValid()) {
-    fprintf(stderr, "%s\n",
-            qPrintable(QDBusConnection::sessionBus().lastError().message()));
-  }
-}
+Utils::Utils(QObject *parent) : QObject(parent) {}
 
 void Utils::showDesktop(bool show) {
-  plasmaShellDBusInterface->call("setDashboardShown", show);
+  if (show) {
+    minimizedWindows.clear();
+
+    for (const auto wid : KWindowSystem::windows()) {
+      KWindowInfo windowInfo(wid, {KWindowSystem::NET::Property::WMState});
+
+      if (!windowInfo.isMinimized()) {
+        KWindowSystem::minimizeWindow(windowInfo.win());
+        minimizedWindows.append(windowInfo);
+      }
+    }
+  } else {
+    for (const auto windowInfo : minimizedWindows) {
+      KWindowSystem::unminimizeWindow(windowInfo.win());
+    }
+  }
 }

@@ -29,5 +29,6 @@ install(TARGETS superxdashplugin DESTINATION ${KDE_INSTALL_QMLDIR}/com/superxos/
 target_link_libraries(superxdashplugin
     Qt5::Quick
     KF5::KIOCore
+    KF5::WindowSystem
 )
 

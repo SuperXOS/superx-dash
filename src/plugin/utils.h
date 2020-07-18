@@ -24,22 +24,21 @@
 #ifndef PLUGIN_UTILS_H
 #define PLUGIN_UTILS_H
 
-#include <QDBusInterface>
 #include <QObject>
+#include <QList>
+#include <KWindowInfo>
 
 class Utils : public QObject {
- Q_OBJECT
+  Q_OBJECT
 
- public:
+public:
   Utils(QObject *parent = nullptr);
 
 private:
-    QDBusInterface *plasmaShellDBusInterface;
+  QList<KWindowInfo> minimizedWindows;
 
- public slots:
+public slots:
   void showDesktop(bool show);
 };
 
 #endif
-
-

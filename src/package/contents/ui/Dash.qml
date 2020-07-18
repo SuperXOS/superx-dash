@@ -444,7 +444,7 @@ Kicker.DashboardWindow {
         appsGridContainer.krunnerResultsGrid.highlightIndex = 0;
 
         isOpen = !isOpen;
-//        SuperXDashPlugin.Utils.showDesktop(isOpen);
+        SuperXDashPlugin.Utils.showDesktop(isOpen);
         toggle();
 
         if (isOpen) {
