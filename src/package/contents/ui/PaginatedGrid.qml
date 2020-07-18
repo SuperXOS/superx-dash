@@ -62,15 +62,18 @@ Item {
         highlightMoveVelocity: -1
 
         delegate: GridView {
+            property int startIndex: index*itemsPerPage
+            property double horizontalSpacing: (pageHolder.width - (root.cols*root.cellWidth)) / root.cols
+
             id: grid
             width: pageHolder.width
             height: pageHolder.height
-            cellWidth: root.cellWidth
+            cellWidth: root.cellWidth+grid.horizontalSpacing
             cellHeight: root.cellHeight
             interactive: false
             currentIndex: highlightIndex
             highlight: Rectangle {
-                width: root.cellWidth
+                width: root.cellWidth+grid.horizontalSpacing
                 height: root.cellHeight
                 radius: 4
                 color: Qt.rgba(Kirigami.Theme.highlightColor.r, Kirigami.Theme.highlightColor.g, Kirigami.Theme.highlightColor.b, 0.2)
@@ -78,12 +81,11 @@ Item {
             }
             highlightFollowsCurrentItem: true
 
-            property int startIndex: index*itemsPerPage
 
             model: (totalCount - startIndex) < itemsPerPage ? (totalCount - startIndex) : itemsPerPage
             delegate: Item {
                 id: gridItem
-                width: root.cellWidth
+                width: root.cellWidth+grid.horizontalSpacing
                 height: root.cellHeight
 
                 Item {
@@ -120,6 +122,7 @@ Item {
                 z: -1
             }
         }
+
     }
 
     PageIndicator {
