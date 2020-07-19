@@ -43,7 +43,7 @@ Kicker.DashboardWindow {
     property var allAppsSorted: [];
     property var apps: [];
 
-    backgroundColor: Qt.rgba(0,0,0,0.7)
+    backgroundColor: Qt.rgba(0,0,0,0.5)
     onKeyEscapePressed: {
         toggleDash();
     }
@@ -168,8 +168,6 @@ Kicker.DashboardWindow {
                 onClicked: {
                     toggleDash();
                 }
-            }KCoreAddons.KUser {
-                id: user
             }
         }
 

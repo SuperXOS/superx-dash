@@ -133,8 +133,8 @@ RowLayout {
         verticalAlignment: Text.AlignVCenter
         color: "#fff"
         font.pointSize: 10
-        leftPadding: 15
-        rightPadding: 15
+        leftPadding: 4
+        rightPadding: 4
     }
 
     Item {
@@ -154,7 +154,7 @@ RowLayout {
         height: parent.height
         radius: parent.height
         color: Qt.rgba(0,0,0,0.5)
-        Layout.leftMargin: 15
+        Layout.leftMargin: 5
 
         RowLayout {
             anchors.fill: parent
