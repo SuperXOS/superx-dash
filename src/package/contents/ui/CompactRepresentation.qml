@@ -21,6 +21,7 @@ import QtQuick 2.0
 import QtQuick.Layouts 1.1
 
 import org.kde.plasma.core 2.0 as PlasmaCore
+import Qt.labs.settings 1.0
 
 Item {
     id: root
@@ -31,6 +32,8 @@ Item {
         || plasmoid.location === PlasmaCore.Types.LeftEdge)
     readonly property bool vertical: (plasmoid.formFactor === PlasmaCore.Types.Vertical)
     property QtObject dashWindow: null
+    property var apps: [];
+    property var allAppsSorted: [];
 
     onWidthChanged: updateSizeHints()
     onHeightChanged: updateSizeHints()
@@ -90,11 +93,97 @@ Item {
         }
     }
 
+    Settings {
+        id: settings
+        category: "SuperXDash"
+
+        property int gridItemSize: 180;
+        property int paginationSpeed: 1000;
+        property string pinned: "{}";
+    }
+
+    PlasmaCore.DataSource {
+        id: appsSource
+        engine: "apps"
+
+        onSourceAdded: {
+            connectSource(source);
+        }
+
+        onSourcesChanged: {
+            sourcesChangedTimer.stop();
+            sourcesChangedTimer.start();
+        }
+
+        Component.onCompleted: {
+            connectedSources = sources;
+            populateAppsModel("/");
+        }
+    }
+
     Component.onCompleted: {
         dashWindow = Qt.createQmlObject("Dash {}", root);
         plasmoid.activated.connect(function() {
             dashWindow.toggleDash();
             justOpenedTimer.start();
         })
+    }
+
+    function populateAppsModel(source) {
+        var entries = appsSource.data[source].entries;
+        var _apps = {};
+        var pinnedJsonObj = JSON.parse(settings.pinned);
+
+        /**
+         * If source is "All Apps" then populate allAppsSorted if not populated and continue
+         * If source is something else, populate and continue
+         **/
+        if ((source === "/" && allAppsSorted.length === 0) || source !== "/") {
+            while (entries.length > 0) {
+                var entry = appsSource.data[entries.shift()];
+
+                if (entry) {
+                    if (entry.isApp) {
+                        if (entry.display) {
+                            _apps[entry.menuId] = {
+                               name: entry.name,
+                               icon: entry.iconName,
+                               url: entry.entryPath
+                            };
+                        }
+                    } else {
+                        entries.unshift(...entry.entries);
+                    }
+                }
+            }
+
+            if (source === "/") {
+                allAppsSorted = Object.keys(_apps).map((e) => [e, _apps[e].name]).sort((a,b) => a[1].localeCompare(b[1])).map((e) => _apps[e[0]]);
+            }
+        }
+
+        apps = []
+//        console.log("All Apps Sorted", JSON.stringify(allAppsSorted, null, 2));
+
+        if (source === "/") {
+            Object.keys(pinnedJsonObj).map((k) => {
+                apps.push({
+                    name: pinnedJsonObj[k].name,
+                    icon: pinnedJsonObj[k].icon,
+                    url: pinnedJsonObj[k].url,
+                    isPinned: true
+                });
+            });
+
+            allAppsSorted.forEach((app) => {
+                var skip = false;
+
+                if (!pinnedJsonObj[app.url]) {
+                    apps.push(app);
+                }
+            });
+        } else {
+            Object.keys(_apps).map((e) => [e, _apps[e].name]).sort((a,b) => a[1].localeCompare(b[1])).map((e) => apps.push(_apps[e[0]]));
+        }
     }
 }

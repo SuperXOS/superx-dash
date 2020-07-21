@@ -14,7 +14,7 @@ set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${ECM_MODULE_PATH})
 
 include(KDEInstallDirs)
 
-find_package(KF5 REQUIRED COMPONENTS Plasma KIO WindowSystem)
+find_package(KF5 REQUIRED COMPONENTS Plasma KIO WindowSystem Runner)
 find_package(Qt5 REQUIRED COMPONENTS Quick )
 
 add_subdirectory(src)

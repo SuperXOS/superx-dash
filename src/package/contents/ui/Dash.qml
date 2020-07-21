@@ -40,8 +40,6 @@ import "tools.js" as Tools
 Kicker.DashboardWindow {
     property bool isOpen: false;
     property bool showPinned: true;
-    property var allAppsSorted: [];
-    property var apps: [];
 
     backgroundColor: Qt.rgba(0,0,0,0.5)
     onKeyEscapePressed: {
@@ -51,14 +49,6 @@ Kicker.DashboardWindow {
     mainItem: Item {
         id: root
         anchors.fill: parent
-
-        Settings {
-            id: settings
-            category: "SuperXDash"
-
-            property int gridItemSize: 180;
-            property int paginationSpeed: 1000;
-        }
 
         KCoreAddons.KUser {
             id: kuser
@@ -263,7 +253,10 @@ Kicker.DashboardWindow {
                                     apps = []
 
                                     appsGridContainer.headingText = model.name;
-                                    populateAppsModel(model.url)
+                                    populateAppsModel(model.url);
+
+                                    appsGridContainer.appsGrid.totalCount = apps.length;
+                                    appsGridContainer.appsGrid.reset();
 
                                     topContainer.queryField.text = "";
                                 }
@@ -290,25 +283,6 @@ Kicker.DashboardWindow {
             }
         }
 
-        PlasmaCore.DataSource {
-            id: appsSource
-            engine: "apps"
-
-            onSourceAdded: {
-                connectSource(source);
-            }
-
-            onSourcesChanged: {
-                sourcesChangedTimer.stop();
-                sourcesChangedTimer.start();
-            }
-
-            Component.onCompleted: {
-                connectedSources = sources;
-                populateAppsModel("/");
-            }
-        }
-
         Timer {
             id: dashOpenTimer
             repeat: false
@@ -320,67 +294,6 @@ Kicker.DashboardWindow {
         }
     }
 
-    function populateAppsModel(source) {
-        var entries = appsSource.data[source].entries;
-        var _apps = {};
-        var pinnedJsonObj = plasmoid.configuration.pinned && JSON.parse(plasmoid.configuration.pinned) || {};
-
-        /**
-         * If source is "All Apps" then populate allAppsSorted if not populated and continue
-         * If source is something else, populate and continue
-         **/
-        if ((source === "/" && allAppsSorted.length === 0) || source !== "/") {
-            while (entries.length > 0) {
-                var entry = appsSource.data[entries.shift()];
-
-                if (entry) {
-                    if (entry.isApp) {
-                        if (entry.display) {
-                            _apps[entry.menuId] = {
-                               name: entry.name,
-                               icon: entry.iconName,
-                               url: entry.entryPath
-                            };
-                        }
-                    } else {
-                        entries.unshift(...entry.entries);
-                    }
-                }
-            }
-
-            if (source === "/") {
-                allAppsSorted = Object.keys(_apps).map((e) => [e, _apps[e].name]).sort((a,b) => a[1].localeCompare(b[1])).map((e) => _apps[e[0]]);
-            }
-        }
-
-        apps = []
-//        console.log("All Apps Sorted", JSON.stringify(allAppsSorted, null, 2));
-
-        if (source === "/") {
-            Object.keys(pinnedJsonObj).map((k) => {
-                apps.push({
-                    name: pinnedJsonObj[k].name,
-                    icon: pinnedJsonObj[k].icon,
-                    url: pinnedJsonObj[k].url,
-                    isPinned: true
-                });
-            });
-
-            allAppsSorted.forEach((app) => {
-                var skip = false;
-
-                if (!pinnedJsonObj[app.url]) {
-                    apps.push(app);
-                }
-            });
-        } else {
-            Object.keys(_apps).map((e) => [e, _apps[e].name]).sort((a,b) => a[1].localeCompare(b[1])).map((e) => apps.push(_apps[e[0]]));
-        }
-
-        appsGridContainer.appsGrid.totalCount = apps.length;
-        appsGridContainer.appsGrid.reset();
-    }
-
     function toggleDash() {
         topContainer.queryField.text = "";
 
@@ -389,6 +302,9 @@ Kicker.DashboardWindow {
 
         appsGridContainer.krunnerResultsGrid.hoverEnabled = false;
         appsGridContainer.krunnerResultsGrid.highlightIndex = 0;
+
+        appsGridContainer.appsGrid.totalCount = apps.length;
+        appsGridContainer.appsGrid.reset();
 
         isOpen = !isOpen;
         SuperXDashPlugin.Utils.showDesktop(isOpen);

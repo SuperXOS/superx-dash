@@ -30,5 +30,6 @@ target_link_libraries(superxdashplugin
     Qt5::Quick
     KF5::KIOCore
     KF5::WindowSystem
+    KF5::Runner
 )
 

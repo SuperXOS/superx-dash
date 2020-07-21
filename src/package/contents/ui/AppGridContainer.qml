@@ -32,20 +32,39 @@ Item {
     property alias appsGrid: appsGrid
     property alias krunnerResultsGrid: krunnerResultsGrid
     property string headingText: "Applications"
+    property var searchedItems: []
 
-    Milou.ResultsModel {
-        id: krunnerResultsModel
-        queryString: queryField.text
-        limit: 15
-        onRowsInserted: {
-            krunnerResultsGrid.totalCount = krunnerResultsModel.rowCount();
+//    Milou.ResultsModel {
+//        id: krunnerResultsModel
+//        queryString: queryField.text
+//        limit: 15
+//        onRowsInserted: {
+//            krunnerResultsGrid.totalCount = krunnerResultsModel.rowCount();
+//            krunnerResultsGrid.reset();
+
+//            appsGrid.hoverEnabled = false;
+//            appsGrid.highlightIndex = 0;
+
+//            krunnerResultsGrid.hoverEnabled = false;
+//            krunnerResultsGrid.highlightIndex = 0;
+//        }
+//    }
+
+    Connections {
+        target: queryField
+
+        function onTextChanged() {
+            SuperXDashPlugin.AppsList.search(queryField.text);
+        }
+    }
+
+    Connections {
+        target: SuperXDashPlugin.AppsList
+
+        function onSearchResult(searchResultList) {
+            searchedItems = searchResultList;
+            krunnerResultsGrid.totalCount = searchedItems.length;
             krunnerResultsGrid.reset();
-
-            appsGrid.hoverEnabled = false;
-            appsGrid.highlightIndex = 0;
-
-            krunnerResultsGrid.hoverEnabled = false;
-            krunnerResultsGrid.highlightIndex = 0;
         }
     }
 
@@ -56,17 +75,51 @@ Item {
         MenuItem {
             text: "Pin to top"
             onClicked: {
-                var pinnedJsonObj = plasmoid.configuration.pinned && JSON.parse(plasmoid.configuration.pinned) || {};
+                var pinnedJsonObj = JSON.parse(settings.pinned);
                 var model = apps[_appsCtxMenu.index];
+                var desktopFile = model.url.split("/").pop();
                 var modelJson = {
                     name: model.name,
                     icon: model.icon,
                     url: model.url
                 };
 
-                pinnedJsonObj[model.url] = modelJson;
-                plasmoid.configuration.pinned = JSON.stringify(pinnedJsonObj);
+                pinnedJsonObj[desktopFile] = modelJson;
+                settings.pinned = JSON.stringify(pinnedJsonObj);
                 populateAppsModel("/");
+            }
+        }
+    }
+
+    Menu {
+        id: _searchCtxMenu
+        property int index
+
+        MenuItem {
+            text: "Pin to top"
+            visible: searchedItems[_searchCtxMenu.index] ? searchedItems[_searchCtxMenu.index].isApplication : false
+            onClicked: {
+                var pinnedJsonObj = JSON.parse(settings.pinned);
+                var model = searchedItems[_searchCtxMenu.index];
+                var modelJson;
+
+                for (var i in apps) {
+                    if (apps[i].url.split("/").pop() === model.url) {
+                        modelJson = apps[i];
+                        break;
+                    }
+                }
+
+                pinnedJsonObj[model.url] = modelJson;
+                settings.pinned = JSON.stringify(pinnedJsonObj);
+                populateAppsModel("/");
+            }
+        }
+
+        MenuItem {
+            text: "Open"
+            onClicked: {
+                console.log("Open entry");
             }
         }
     }
@@ -78,13 +131,14 @@ Item {
         MenuItem {
             text: "Unpin"
             onClicked: {
-                var pinnedJsonObj = JSON.parse(plasmoid.configuration.pinned);
+                var pinnedJsonObj = JSON.parse(settings.pinned);
+                var url = apps[_pinnedCtxMenu.index].url.split("/").pop();
 
-                if (pinnedJsonObj[apps[_pinnedCtxMenu.index].url]) {
-                    delete pinnedJsonObj[apps[_pinnedCtxMenu.index].url];
+                if (pinnedJsonObj[url]) {
+                    delete pinnedJsonObj[url];
                 }
 
-                plasmoid.configuration.pinned = JSON.stringify(pinnedJsonObj);
+                settings.pinned = JSON.stringify(pinnedJsonObj);
                 populateAppsModel("/");
             }
         }
@@ -115,9 +169,9 @@ Item {
 
             delegate: IconItem {
                 anchors.fill: parent
-                icon: apps[itemIndex].icon
-                label: apps[itemIndex].name
-                isPinned: apps[itemIndex].isPinned ? true : false
+                icon: apps[itemIndex] ? apps[itemIndex].icon : ""
+                label: apps[itemIndex] ? apps[itemIndex].name : ""
+                isPinned: apps[itemIndex] ? (apps[itemIndex].isPinned ? true : false) : false
 
                 onOpenContextMenu: {
                     if (apps[itemIndex].isPinned) {
@@ -140,6 +194,7 @@ Item {
             onScrollingInitiated: {
                 _pinnedCtxMenu.close();
                 _appsCtxMenu.close();
+                _searchCtxMenu.close();
             }
         }
 
@@ -151,21 +206,25 @@ Item {
 
             cellWidth: settings.gridItemSize
             cellHeight: settings.gridItemSize
-            totalCount: krunnerResultsModel.rowCount()
+            totalCount: 0
 
             delegate: IconItem {
                 anchors.fill: parent
-                icon: krunnerResultsModel.data(krunnerResultsModel.index(itemIndex, 0), 1)
-                label: krunnerResultsModel.data(krunnerResultsModel.index(itemIndex, 0), 0)
+                icon: searchedItems[itemIndex] ? searchedItems[itemIndex].icon : ""
+                label: searchedItems[itemIndex] ? searchedItems[itemIndex].name : ""
 
+                onOpenContextMenu: {
+                    _searchCtxMenu.index = itemIndex;
+                    _searchCtxMenu.popup();
+                }
                 onClicked: {
-                    krunnerResultsModel.run(krunnerResultsModel.index(itemIndex, 0));
+                    SuperXDashPlugin.AppsList.runSearchedItem(searchedItems[itemIndex].index);
                     toggleDash();
                     queryField.text = "";
                 }
             }
             onHighlightClicked: {
-                krunnerResultsModel.run(krunnerResultsModel.index(index, 0));
+                SuperXDashPlugin.AppsList.runSearchedItem(searchedItems[index].index);
                 toggleDash();
                 queryField.text = "";
             }

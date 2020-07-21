@@ -25,7 +25,7 @@
 #define PLUGIN_APPSLIST_H
 
 #include <QObject>
-#include <QJsonArray>
+#include <KRunner/RunnerManager>
 
 class AppsList : public QObject {
   Q_OBJECT
@@ -34,11 +34,18 @@ class AppsList : public QObject {
   AppsList(QObject *parent = nullptr);
 
  public slots:
-  void appsList(QString url = "applications:///");
+  //  void appsList(QString url = "applications:///");
+  void search(QString query, int limit = 20);
+  void runSearchedItem(int index);
   void openApp(QString path);
 
  signals:
-  void appsListResult(QJsonArray apps);
+  //  void appsListResult(QJsonArray apps);
+  void searchResult(QVariantList searchResult);
+
+ private:
+  Plasma::RunnerManager *runnerManager;
+  QMap<int, Plasma::QueryMatch> searchedItemsMap;
 };
 
 #endif

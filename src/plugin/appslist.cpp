@@ -31,30 +31,77 @@
 #include <QProcess>
 #include <KService>
 #include <KIOWidgets/KRun>
+#include <QVariantList>
+#include <QVariantMap>
+#include <QAction>
 
-AppsList::AppsList(QObject *parent) : QObject(parent) {}
+AppsList::AppsList(QObject *parent) : QObject(parent) {
+  runnerManager = new Plasma::RunnerManager(this);
+}
 
-void AppsList::appsList(QString url) {
-  KIO::ListJob *listJob = KIO::listRecursive(QUrl(url), KIO::HideProgressInfo);
+void AppsList::search(QString query, int limit) {
+  runnerManager->reset();
+  runnerManager->setupMatchSession();
+  runnerManager->launchQuery(query);
+  connect(runnerManager, &Plasma::RunnerManager::matchesChanged,
+          [=](QList<Plasma::QueryMatch> matches) {
+            QVariantList searchResultList;
+            int count = 0;
 
-  connect(listJob, &KIO::ListJob::entries,
-          [this](KIO::Job *job, const KIO::UDSEntryList &list) {
-            Q_UNUSED(job)
-            QJsonArray apps;
+            for (auto match : matches) {
+              QVariantMap searchedItem;
 
-            for (KIO::UDSEntry app : list) {
-              QJsonObject obj = {
-                  {"name", app.stringValue(app.UDS_NAME)},
-                  {"icon", app.stringValue(app.UDS_ICON_NAME)},
-                  {"url", app.stringValue(app.UDS_LOCAL_PATH)},
-                  {"mimeType", app.stringValue(app.UDS_MIME_TYPE)}};
+              searchedItemsMap.insert(count, match);
 
-              apps.append(obj);
+              searchedItem.insert("name", QVariant::fromValue(match.text()));
+              searchedItem.insert("icon",
+                                  QVariant::fromValue(match.iconName()));
+              searchedItem.insert("url", match.data());
+              searchedItem.insert("isApplication",
+                                  match.runner()->name() == "Applications");
+              searchedItem.insert("index", count);
+
+              searchResultList << searchedItem;
+
+              if (count == limit) {
+                break;
+              }
+
+              count++;
             }
 
-            emit appsListResult(apps);
+            emit searchResult(searchResultList);
+
+            runnerManager->matchSessionComplete();
           });
 }
+
+void AppsList::runSearchedItem(int index) {
+  runnerManager->run(searchedItemsMap[index]);
+}
+
+// void AppsList::appsList(QString url) {
+//  KIO::ListJob *listJob = KIO::listRecursive(QUrl(url),
+//  KIO::HideProgressInfo);
+
+//  connect(listJob, &KIO::ListJob::entries,
+//          [this](KIO::Job *job, const KIO::UDSEntryList &list) {
+//            Q_UNUSED(job)
+//            QJsonArray apps;
+
+//            for (KIO::UDSEntry app : list) {
+//              QJsonObject obj = {
+//                  {"name", app.stringValue(app.UDS_NAME)},
+//                  {"icon", app.stringValue(app.UDS_ICON_NAME)},
+//                  {"url", app.stringValue(app.UDS_LOCAL_PATH)},
+//                  {"mimeType", app.stringValue(app.UDS_MIME_TYPE)}};
+
+//              apps.append(obj);
+//            }
+
+//            emit appsListResult(apps);
+//          });
+//}
 
 void AppsList::openApp(QString path) {
   qDebug() << path;
