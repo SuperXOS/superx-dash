@@ -87,6 +87,9 @@ Item {
                 pinnedJsonObj[desktopFile] = modelJson;
                 settings.pinned = JSON.stringify(pinnedJsonObj);
                 populateAppsModel("/");
+
+                appsGridContainer.appsGrid.totalCount = apps.length;
+                appsGridContainer.appsGrid.reset();
             }
         }
     }
@@ -113,6 +116,9 @@ Item {
                 pinnedJsonObj[model.url] = modelJson;
                 settings.pinned = JSON.stringify(pinnedJsonObj);
                 populateAppsModel("/");
+
+                appsGridContainer.appsGrid.totalCount = apps.length;
+                appsGridContainer.appsGrid.reset();
             }
         }
 
@@ -140,6 +146,9 @@ Item {
 
                 settings.pinned = JSON.stringify(pinnedJsonObj);
                 populateAppsModel("/");
+
+                appsGridContainer.appsGrid.totalCount = apps.length;
+                appsGridContainer.appsGrid.reset();
             }
         }
     }

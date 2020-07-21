@@ -280,6 +280,9 @@ Kicker.DashboardWindow {
             repeat: false
             onTriggered: {
                 populateAppsModel("/");
+
+                appsGridContainer.appsGrid.totalCount = apps.length;
+                appsGridContainer.appsGrid.reset();
             }
         }
 
