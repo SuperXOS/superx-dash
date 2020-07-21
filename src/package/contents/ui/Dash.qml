@@ -289,7 +289,7 @@ Kicker.DashboardWindow {
         Timer {
             id: dashOpenTimer
             repeat: false
-            interval: 100
+            interval: 50
             onTriggered: {
                 appsGridContainer.appsGrid.totalCount = apps.length
                 appsGridContainer.appsGrid.reset();

@@ -118,9 +118,6 @@ Item {
         Component.onCompleted: {
             connectedSources = sources;
             populateAppsModel("/");
-
-            appsGridContainer.appsGrid.totalCount = apps.length;
-            appsGridContainer.appsGrid.reset();
         }
     }
 
