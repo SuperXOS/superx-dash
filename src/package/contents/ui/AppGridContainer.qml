@@ -129,7 +129,9 @@ Item {
         MenuItem {
             text: "Open"
             onClicked: {
-                console.log("Open entry");
+                SuperXDashPlugin.AppsList.runSearchedItem(searchedItems[_searchCtxMenu.index].index);
+                toggleDash();
+                queryField.text = "";
             }
         }
     }
