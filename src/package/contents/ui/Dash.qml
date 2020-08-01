@@ -64,69 +64,6 @@ Kicker.DashboardWindow {
             // { name, icon, url }
         }
 
-        /**
-        * Model for storing categories
-        */
-        ListModel {
-            id: categoriesModel
-
-            ListElement {
-              icon: "applications-all"
-              name: "Applications"
-              url: "/"
-            }
-            ListElement {
-                icon: "applications-development"
-                name: "Development"
-                url: "Development/"
-            }
-            ListElement {
-              icon: "applications-education"
-              name: "Education"
-              url: "Education/"
-            }
-            ListElement {
-              icon: "applications-games"
-              name: "Games"
-              url: "Games/"
-            }
-            ListElement {
-              icon: "applications-graphics"
-              name: "Graphics"
-              url: "Graphics/"
-            }
-            ListElement {
-              icon: "applications-internet"
-              name: "Internet"
-              url: "Internet/"
-            }
-            ListElement {
-              icon: "applications-multimedia"
-              name: "Multimedia"
-              url: "Multimedia/"
-            }
-            ListElement {
-              icon: "applications-office"
-              name: "Office"
-              url: "Office/"
-            }
-            ListElement {
-              icon: "applications-system"
-              name: "System"
-              url: "System/"
-            }
-            ListElement {
-              icon: "applications-utilities"
-              name: "Utilities"
-              url: "Utilities/"
-            }
-            ListElement {
-              icon: "applications-other"
-              name: "Others"
-              url: "Applications/"
-            }
-        }
-
         Item {
             property int spacing: 20
             property int topPaneMargin: 0
@@ -216,10 +153,10 @@ Kicker.DashboardWindow {
                                 anchors.fill: parent
                                 hoverEnabled: true
                                 onClicked: {
-                                    apps = []
+                                    apps = [];
 
                                     appsGridContainer.headingText = model.name;
-                                    populateAppsModel(model.url);
+                                    populateAppsModel(model.url, false);
 
                                     appsGridContainer.appsGrid.totalCount = apps.length;
                                     appsGridContainer.appsGrid.reset();

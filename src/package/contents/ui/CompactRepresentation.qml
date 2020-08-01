@@ -129,7 +129,86 @@ Item {
         })
     }
 
-    function populateAppsModel(source) {
+    ListModel {
+        id: categoriesModel
+    }
+
+    function populateCategories() {
+        var categoriesArray = [
+            {
+              "icon": "applications-all",
+              "name": "Applications",
+              "url": "/"
+            },
+            {
+              "icon": "applications-development",
+              "name": "Development",
+              "url": "Development/"
+            },
+            {
+              "icon": "applications-education",
+              "name": "Education",
+              "url": "Education/"
+            },
+            {
+              "icon": "applications-games",
+              "name": "Games",
+              "url": "Games/"
+            },
+            {
+              "icon": "applications-graphics",
+              "name": "Graphics",
+              "url": "Graphics/"
+            },
+            {
+              "icon": "applications-internet",
+              "name": "Internet",
+              "url": "Internet/"
+            },
+            {
+              "icon": "applications-multimedia",
+              "name": "Multimedia",
+              "url": "Multimedia/"
+            },
+            {
+              "icon": "applications-office",
+              "name": "Office",
+              "url": "Office/"
+            },
+            {
+              "icon": "applications-system",
+              "name": "System",
+              "url": "System/"
+            },
+            {
+              "icon": "applications-utilities",
+              "name": "Utilities",
+              "url": "Utilities/"
+            },
+            {
+              "icon": "applications-other",
+              "name": "Others",
+              "url": "Applications/"
+            }
+        ];
+
+        categoriesModel.clear();
+
+        for (var i in categoriesArray) {
+            var category = categoriesArray[i];
+
+            if (appsSource.data[category.url].entries.length > 0) {
+                categoriesModel.append(category);
+            }
+
+        }
+    }
+
+    function populateAppsModel(source, shouldPopulateCategories=true) {
+        if (shouldPopulateCategories) {
+            populateCategories();
+        }
+
         var entries = appsSource.data[source].entries;
         var _apps = {};
         var pinnedJsonObj = JSON.parse(settings.pinned);
@@ -163,7 +242,6 @@ Item {
         }
 
         apps = []
-//        console.log("All Apps Sorted", JSON.stringify(allAppsSorted, null, 2));
 
         if (source === "/") {
             Object.keys(pinnedJsonObj).map((k) => {
