@@ -127,40 +127,6 @@ Kicker.DashboardWindow {
             }
         }
 
-        SystemFavoritesContainer {
-            id: infoContainer
-            height: 48
-            anchors {
-                top: parent.top
-                right: parent.right
-                margins: 10
-            }
-        }
-
-        Kirigami.Icon {
-            width: 30
-            height: 30
-            source: "window-close"
-            anchors {
-                top: parent.top
-                left: parent.left
-                margins: 10
-            }
-
-            ColorOverlay {
-                anchors.fill: parent
-                source: parent
-                color: "#ffeeeeee"
-            }
-
-            MouseArea {
-                anchors.fill: parent
-                onClicked: {
-                    toggleDash();
-                }
-            }
-        }
-
         Item {
             property int spacing: 20
             property int topPaneMargin: 0
@@ -289,7 +255,7 @@ Kicker.DashboardWindow {
         Timer {
             id: dashOpenTimer
             repeat: false
-            interval: 50
+            interval: 100
             onTriggered: {
                 appsGridContainer.appsGrid.totalCount = apps.length
                 appsGridContainer.appsGrid.reset();

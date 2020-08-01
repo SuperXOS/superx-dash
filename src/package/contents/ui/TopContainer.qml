@@ -39,6 +39,30 @@ Item {
 //        }
 //    }
 
+    Kirigami.Icon {
+        width: 30
+        height: 30
+        source: "window-close"
+        anchors {
+            verticalCenter: parent.verticalCenter
+            left: parent.left
+            leftMargin: 20
+        }
+
+        ColorOverlay {
+            anchors.fill: parent
+            source: parent
+            color: "#ffeeeeee"
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            onClicked: {
+                toggleDash();
+            }
+        }
+    }
+
     TextArea {
         id: queryField
         width: 500
@@ -120,6 +144,16 @@ Item {
             onClicked: {
                 queryField.text = "";
             }
+        }
+    }
+
+    SystemFavoritesContainer {
+        id: infoContainer
+        height: 48
+        anchors {
+            verticalCenter: parent.verticalCenter
+            right: parent.right
+            margins: 10
         }
     }
 }
