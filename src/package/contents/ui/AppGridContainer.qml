@@ -106,6 +106,10 @@ Item {
                 var model = searchedItems[_searchCtxMenu.index];
                 var modelJson;
 
+                if (model.url.toString().startsWith("applications:")) {
+                    model.url = model.url.toString().replace("applications:", "");
+                }
+
                 for (var i in apps) {
                     if (apps[i].url.split("/").pop() === model.url) {
                         modelJson = apps[i];

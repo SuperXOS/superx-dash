@@ -23,6 +23,7 @@
 
 #include "appslist.h"
 
+#include <KConfig>
 #include <KIO/ListJob>
 #include <QUrl>
 #include <QDebug>
@@ -36,7 +37,10 @@
 #include <QAction>
 
 AppsList::AppsList(QObject *parent) : QObject(parent) {
-  runnerManager = new Plasma::RunnerManager(this);
+  KConfig *config = new KConfig(QStringLiteral("com.superxos"));
+  KConfigGroup *cfgGroup = new KConfigGroup(config, "Dash");
+
+  runnerManager = new Plasma::RunnerManager(*cfgGroup, this);
 }
 
 void AppsList::search(QString query, int limit) {
