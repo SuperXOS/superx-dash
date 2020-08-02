@@ -1,0 +1,13 @@
+Source: superx-dash
+Section: unknown
+Priority: optional
+Maintainer: Anupam Basak <anupam.basak27@gmail.com>
+Build-Depends: debhelper (>= 10)
+Standards-Version: 4.1.2
+Homepage: https://github.com/SuperXOS/superx-dash
+Vcs-Git: https://github.com/SuperXOS/superx-dash.git
+
+Package: superx-dash
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: A fullscreen dashboard for SuperXOS
