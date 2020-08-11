@@ -2,12 +2,20 @@ Source: superx-dash
 Section: unknown
 Priority: optional
 Maintainer: Anupam Basak <anupam.basak27@gmail.com>
-Build-Depends: debhelper (>= 10)
 Standards-Version: 4.1.2
 Homepage: https://github.com/SuperXOS/superx-dash
 Vcs-Git: https://github.com/SuperXOS/superx-dash.git
+Build-Depends:
+    debhelper (>= 10),
+    cmake,
+    extra-cmake-modules,
+    qtdeclarative5-dev,
+    libkf5plasma-dev,
+    kio-dev,
+    libkf5windowsystem-dev,
+    libkf5runner-dev
 
 Package: superx-dash
-Architecture: any
+Architecture: amd64
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: A fullscreen dashboard for SuperXOS
