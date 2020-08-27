@@ -196,9 +196,30 @@ Item {
 
         for (var i in categoriesArray) {
             var category = categoriesArray[i];
+            var hasDesktopEntries = false;
 
-            if (appsSource.data[category.url].entries.length > 0) {
-                categoriesModel.append(category);
+            if (appsSource.data[category.url] &&
+                appsSource.data[category.url].entries) {
+                var entries =  appsSource.data[category.url].entries;
+
+                while (entries.length > 0) {
+                    var entry = appsSource.data[entries.shift()];
+
+                    if (entry) {
+                        if (entry.isApp) {
+                            if (entry.display) {
+                                hasDesktopEntries = true;
+                                break;
+                            }
+                        } else {
+                            entries.unshift(...entry.entries);
+                        }
+                    }
+                }
+
+                if (hasDesktopEntries) {
+                    categoriesModel.append(category);
+                }
             }
 
         }
