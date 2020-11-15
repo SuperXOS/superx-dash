@@ -1,6 +1,8 @@
 # SuperX Dash
 Plasma-based application launcher for [SuperXOS](http://superxos.com)
 
+**Disclaimer:** The software component is currently unreleased and untested for general consumption under the SuperX OS Project.
+
 # Screenshots
 <p align="center">
   <img src="https://gist.githubusercontent.com/anupam-git/7e2701be8d330e16001e00cec6033bac/raw/68bed6d78f2d868e81d123956a02184bce15373d/ss1.png" >
