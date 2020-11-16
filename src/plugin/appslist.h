@@ -41,7 +41,7 @@ class AppsList : public QObject {
 
  signals:
   //  void appsListResult(QJsonArray apps);
-  void searchResult(QVariantList searchResult);
+  void searchResult(QVariantList searchResultList);
 
  private:
   Plasma::RunnerManager *runnerManager;

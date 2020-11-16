@@ -46,7 +46,7 @@ Item {
     Connections {
         target: queryField
 
-        function onTextChanged() {
+        onTextChanged: {
             queryTextChangeTimeout.restart();
         }
     }
@@ -54,8 +54,7 @@ Item {
     Connections {
         target: SuperXDashPlugin.AppsList
 
-        function onSearchResult(searchResultList) {
-            searchedItems = [];
+        onSearchResult: {
             searchedItems = searchResultList;
             krunnerResultsGrid.totalCount = searchedItems.length;
         }

@@ -34,40 +34,42 @@ AppsList *appslist = nullptr;
 SystemFavourites *systemFavourites = nullptr;
 Utils *utils = nullptr;
 
+static QObject *appsListSingletonProvider(QQmlEngine *e, QJSEngine *j) {
+  Q_UNUSED(j)
+
+  if (appslist == nullptr) {
+    appslist = new AppsList(e);
+  }
+
+  return appslist;
+}
+
+static QObject *systemFavouritesSingletonProvider(QQmlEngine *e, QJSEngine *j) {
+  Q_UNUSED(j)
+
+  if (systemFavourites == nullptr) {
+    systemFavourites = new SystemFavourites(e);
+  }
+
+  return systemFavourites;
+}
+
+static QObject *utilsSingletonProvider(QQmlEngine *e, QJSEngine *j) {
+  Q_UNUSED(j)
+
+  if (utils == nullptr) {
+    utils = new Utils(e);
+  }
+
+  return utils;
+}
+
 void SuperXDashPlugin::registerTypes(const char *uri) {
   Q_ASSERT(QLatin1String(uri) == QLatin1String("com.superxos.dash"));
 
-  qDebug() << "Registering qml types";
-
-  qmlRegisterSingletonType<AppsList>(
-      uri, 1, 0, "AppsList", [=](QQmlEngine *e, QJSEngine *j) -> QObject * {
-        Q_UNUSED(j)
-
-        if (appslist == nullptr) {
-          appslist = new AppsList(e);
-        }
-
-        return appslist;
-      });
-  qmlRegisterSingletonType<SystemFavourites>(
-      uri, 1, 0, "SystemFavourites",
-      [=](QQmlEngine *e, QJSEngine *j) -> QObject * {
-        Q_UNUSED(j)
-
-        if (systemFavourites == nullptr) {
-          systemFavourites = new SystemFavourites(e);
-        }
-
-        return systemFavourites;
-      });
-  qmlRegisterSingletonType<Utils>(
-      uri, 1, 0, "Utils", [=](QQmlEngine *e, QJSEngine *j) -> QObject * {
-        Q_UNUSED(j)
-
-        if (utils == nullptr) {
-          utils = new Utils(e);
-        }
-
-        return utils;
-      });
+  qmlRegisterSingletonType<AppsList>(uri, 1, 0, "AppsList",
+                                     appsListSingletonProvider);
+  qmlRegisterSingletonType<SystemFavourites>(uri, 1, 0, "SystemFavourites",
+                                             systemFavouritesSingletonProvider);
+  qmlRegisterSingletonType<Utils>(uri, 1, 0, "Utils", utilsSingletonProvider);
 }
