@@ -34,27 +34,20 @@ Item {
     property string headingText: "Applications"
     property var searchedItems: []
 
-//    Milou.ResultsModel {
-//        id: krunnerResultsModel
-//        queryString: queryField.text
-//        limit: 15
-//        onRowsInserted: {
-//            krunnerResultsGrid.totalCount = krunnerResultsModel.rowCount();
-//            krunnerResultsGrid.reset();
-
-//            appsGrid.hoverEnabled = false;
-//            appsGrid.highlightIndex = 0;
-
-//            krunnerResultsGrid.hoverEnabled = false;
-//            krunnerResultsGrid.highlightIndex = 0;
-//        }
-//    }
+    Timer {
+        id: queryTextChangeTimeout
+        onTriggered: {
+            SuperXDashPlugin.AppsList.search(queryField.text);
+        }
+        interval: 300
+        repeat: false
+    }
 
     Connections {
         target: queryField
 
         function onTextChanged() {
-            SuperXDashPlugin.AppsList.search(queryField.text);
+            queryTextChangeTimeout.restart();
         }
     }
 
@@ -62,9 +55,9 @@ Item {
         target: SuperXDashPlugin.AppsList
 
         function onSearchResult(searchResultList) {
+            searchedItems = [];
             searchedItems = searchResultList;
             krunnerResultsGrid.totalCount = searchedItems.length;
-            krunnerResultsGrid.reset();
         }
     }
 
@@ -222,6 +215,7 @@ Item {
             cellWidth: settings.gridItemSize
             cellHeight: settings.gridItemSize
             totalCount: 0
+            singlePage: true
 
             delegate: IconItem {
                 anchors.fill: parent
