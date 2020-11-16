@@ -39,9 +39,10 @@ Item {
     property int totalCount
     property Component delegate
 
+    property bool singlePage: false
     property int rows: Math.floor(pageHolder.height/root.cellHeight)
     property int cols: Math.floor(pageHolder.width/root.cellWidth)
-    property int pages: Math.ceil(totalCount/(rows*cols))
+    property int pages: singlePage ? 1 : Math.ceil(totalCount/(rows*cols))
     property int itemsPerPage: rows*cols
     property int highlightIndex: 0
     property bool hoverEnabled: false
@@ -201,14 +202,19 @@ Item {
 
     function reset() {
         root.rows = 0;
+        root.rows = Math.floor(pageHolder.height/root.cellHeight);
+
         root.cols = 0;
-        root.pages = 0;
-        root.itemsPerPage = 0;
+        root.cols = Math.floor(pageHolder.width/root.cellWidth);
+
         root.highlightIndex = 0;
 
-        root.rows = Math.floor(pageHolder.height/root.cellHeight);
-        root.cols = Math.floor(pageHolder.width/root.cellWidth);
-        root.pages = Math.ceil(totalCount/(rows*cols));
+        if (!singlePage) {
+            root.pages = 0;
+            root.pages = Math.ceil(totalCount/(rows*cols));
+        }
+
+        root.itemsPerPage = 0;
         root.itemsPerPage = rows*cols;
     }
 }
