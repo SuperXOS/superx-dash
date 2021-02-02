@@ -1,0 +1,12 @@
+dist: debian:bullseye
+
+script:
+  - sudo ./ci-scripts/travis-build.sh
+
+branches:
+  only:
+    - master
+    - development
+
+notifications:
+  email: false 
